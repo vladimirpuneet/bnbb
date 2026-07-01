@@ -71,6 +71,14 @@ export const viewport = {
   maximumScale: 5,
 };
 
+/** Preload the hero image for faster LCP (Largest Contentful Paint). */
+const heroImagePreload = {
+  rel: "preload",
+  href: "/images/img-01.jpeg",
+  as: "image",
+  fetchPriority: "high" as const,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -78,6 +86,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Preload hero image for LCP optimization */}
+        <link {...heroImagePreload} />
+        {/* Preconnect to weather API for faster fetch */}
+        <link rel="preconnect" href="https://api.open-meteo.com" />
+        <link rel="dns-prefetch" href="https://api.open-meteo.com" />
+      </head>
       <body
         className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-background text-foreground`}
       >

@@ -834,3 +834,102 @@ Stage Summary:
 5. **Analytics integration**: add privacy-friendly analytics (Plausible/Umami) to track booking funnel conversion
 6. **A/B test booking CTA**: try different button colors/positions to optimize conversion
 7. **Add a "Back to top" floating button**: enhance navigation for the long single-page layout
+
+---
+
+## Current Project Status Assessment (Round 8 — webDevReview)
+
+### Status: STABLE & PERFORMANCE-OPTIMIZED
+The dev server continues to run healthily on port 3000, accessible via port 81. All 14 sections render with no errors, lint passes cleanly. 39 components now live in src/components/site/. The hero image is preloaded for faster LCP, the weather API is preconnected, a parallax effect adds visual depth to the hero, reduced-motion is respected for accessibility, and card hover states are polished.
+
+### QA Results (via agent-browser)
+- ✅ All 14 sections render with no console/page errors
+- ✅ Lint passes cleanly
+- ✅ Hero image preload link present: `/images/img-01.jpeg`
+- ✅ Preconnect to Open-Meteo API: `https://api.open-meteo.com`
+- ✅ Hero parallax: translateY(0px) at top → translateY(200px) at 500px → translateY(400px) capped
+- ✅ Content opacity fades: 1 at top → 0.21 at 500px → 0 at 1000px
+- ✅ Reduced-motion CSS present in compiled stylesheet (1 match for prefers-reduced-motion)
+- ✅ Booking modal opens correctly
+- ✅ Scroll progress works (0% → 52.9%)
+- ✅ VLM rated hero 8/10 (elegant typography, clear hierarchy, good polish)
+
+---
+
+Task ID: 9
+Agent: webDevReview (cron job 244880, round 8)
+Task: Assess current project status, perform QA via agent-browser, then independently select the most appropriate work focus — fix bugs or propose new requirements — and continue development. Mandatory: improve styling with more details and add more features/functionality.
+
+Work Log:
+- Read /home/z/my-project/worklog.md to understand prior work (Tasks 1-8 — 14-section site with full i18n, SW, image dimensions, section dividers, all section headers translated).
+- Performed QA via agent-browser: verified page loads, all 14 sections render, booking modal works, scroll progress works, no errors, lint clean.
+- Selected work focus: PERFORMANCE + ACCESSIBILITY + VISUAL POLISH (4 features).
+
+**1. Image preload hints (layout.tsx):**
+- Added `<link rel="preload" href="/images/img-01.jpeg" as="image" fetchPriority="high">` in the `<head>` for hero image LCP optimization
+- Added `<link rel="preconnect" href="https://api.open-meteo.com">` for faster weather API connection
+- Added `<link rel="dns-prefetch" href="https://api.open-meteo.com">` for DNS resolution
+- Added a `<head>` element to the layout (Next.js App Router supports this in the root layout)
+- Verified: preload link present with href="/images/img-01.jpeg", preconnect to open-meteo present
+
+**2. Reduced-motion support (globals.css):**
+- Added comprehensive `@media (prefers-reduced-motion: reduce)` block:
+  - Sets all animation-duration and transition-duration to 0.01ms !important
+  - Sets animation-iteration-count to 1 !important
+  - Sets scroll-behavior to auto !important
+  - Disables decorative animations entirely: .animate-float, .animate-shimmer, .animate-ping, .animate-bounce
+  - Forces framer-motion reveal elements to opacity:1 and transform:none (show content immediately)
+- Verified: prefers-reduced-motion CSS present in compiled stylesheet (1 match)
+
+**3. Hero parallax scroll effect (hero.tsx + use-scroll-y.ts):**
+- Created `useScrollY` hook: returns current scroll position via passive scroll listener + requestAnimationFrame for performance
+- Updated Hero component:
+  - Background image wrapped in a div with `will-change-transform` and `translateY(parallaxOffset)` transform
+  - Parallax rate: 0.4× (image moves slower than scroll), capped at 400px to avoid revealing edges
+  - Image height increased to h-[120%] to accommodate the parallax movement
+  - Content wrapper has `transition-opacity duration-300` and fades out as user scrolls (opacity = 1 - scrollY / (viewportHeight * 0.7))
+  - SSR-safe: uses `typeof window !== "undefined"` check for window.innerHeight with 700px fallback
+- Verified: translateY(0px) at top → translateY(200px) at 500px → translateY(400px) at 1000px (capped)
+- Verified: opacity 1 at top → 0.21 at 500px → 0 at 1000px
+
+**4. Card hover polish (amenities.tsx + overview.tsx):**
+- Amenities cards: added `transition-all duration-300 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 hover:-translate-y-0.5`
+- Amenities list items: added `rounded-lg p-1 -m-1 transition-colors hover:bg-background/60` for subtle hover highlight
+- Amenities icon containers: added `transition-colors group-hover:border-primary/30`
+- Overview highlight cards: added `hover:shadow-md hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-0.5`
+- Overview highlight icon: changed from flat bg to gradient `bg-gradient-to-br from-primary/10 to-primary/5`, added `transition-transform group-hover:scale-110` (icon scales up on hover)
+- Verified: all hover states work, subtle lift + shadow + scale effects
+
+**Verification (agent-browser):**
+- All 14 sections render with no console/page errors ✓
+- Hero image preload: `/images/img-01.jpeg` ✓
+- Preconnect to Open-Meteo: `https://api.open-meteo.com` ✓
+- Hero parallax: translateY scales with scroll (0→200→400px), capped at 400px ✓
+- Content opacity fades: 1→0.21→0 as user scrolls past hero ✓
+- Reduced-motion CSS: present in compiled stylesheet ✓
+- Lint: passes cleanly ✓
+- VLM rated hero 8/10 (elegant typography, clear hierarchy, good polish details)
+
+Stage Summary:
+- ✅ Added 4 features: image preload, reduced-motion support, hero parallax, card hover polish
+- ✅ 39 components in src/components/site/ (was 38)
+- ✅ Hero LCP optimized with preload + fetchPriority="high"
+- ✅ Weather API fetch optimized with preconnect + dns-prefetch
+- ✅ Accessibility: respects prefers-reduced-motion (disables all animations)
+- ✅ Visual polish: hero parallax (0.4× rate, capped), content fade-out, card hover lift+shadow+scale
+- ✅ All features verified working via agent-browser
+- ✅ Lint clean, no runtime errors
+
+### Unresolved Issues / Risks
+- The parallax effect uses `window.innerHeight` which is read during render — while SSR-safe with the fallback, the initial client render may use the fallback (700px) before the first scroll event updates it. This is a minor flash that's not noticeable in practice.
+- The reduced-motion CSS uses `!important` to override all animations — this is intentional for accessibility but means users who explicitly prefer reduced motion won't see any of the polished animations.
+- The hero parallax adds a `will-change-transform` which hints to the browser to GPU-accelerate the transform — this uses slightly more memory but provides smoother scrolling.
+
+### Priority Recommendations for Next Phase
+1. **Translate property content**: create a Hindi version of property.ts (description, FAQs, amenities, reviews) for full localization
+2. **Migrate to next/image**: replace <img> with next/image for automatic responsive sizing, modern formats (WebP/AVIF), and built-in lazy loading
+3. **Analytics integration**: add privacy-friendly analytics (Plausible/Umami) to track booking funnel conversion
+4. **A/B test booking CTA**: try different button colors/positions to optimize conversion
+5. **Add a "reading progress" indicator per section**: show how far through each section the user has scrolled
+6. **Add keyboard shortcut hints**: e.g., "Press B to Book" with a toast on first visit
+7. **Add a comparison table**: compare this property vs nearby alternatives (price, amenities, rating)

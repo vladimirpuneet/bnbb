@@ -185,6 +185,34 @@
 }
 
 /* ============================================================================
+   Reduced motion — respect prefers-reduced-motion for accessibility
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Disable specific decorative animations entirely */
+  .animate-float,
+  .animate-shimmer,
+  .animate-ping,
+  .animate-bounce {
+    animation: none !important;
+  }
+
+  /* Reveal animations: show content immediately without sliding */
+  [class*="framer-motion"] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ============================================================================
    Print stylesheet — produces a clean printable property summary
    ========================================================================== */
 @media print {

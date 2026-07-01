@@ -7,29 +7,46 @@ import { StarRating } from "./star-rating";
 import { Reveal } from "./reveal";
 import { useBooking } from "./use-booking";
 import { useI18n } from "./use-i18n";
+import { useScrollY } from "./use-scroll-y";
 import { openLightbox } from "./lightbox";
 import { property } from "@/lib/property";
 
 export function Hero() {
   const openBooking = useBooking((s) => s.open);
   const { t } = useI18n();
+  const scrollY = useScrollY();
+
+  // Parallax: move background image slower than scroll (0.4x rate)
+  // Cap at 400px to avoid revealing edges on tall screens
+  const parallaxOffset = Math.min(scrollY * 0.4, 400);
+  // Content fades out as user scrolls past hero (use 700px as a safe default for SSR)
+  const fadeThreshold = typeof window !== "undefined" ? window.innerHeight * 0.7 : 700;
+  const contentOpacity = Math.max(0, 1 - scrollY / fadeThreshold);
 
   return (
     <section id="top" className="relative -mt-16 sm:-mt-18 h-[100svh] min-h-[640px] w-full overflow-hidden">
-      {/* Background image */}
-      <img
-        src={property.hero.image}
-        alt="The Valley Gaze Penthouse — valley and mountain views in Dehradun"
-        className="absolute inset-0 h-full w-full object-cover"
-        fetchPriority="high"
-      />
+      {/* Background image with parallax */}
+      <div
+        className="absolute inset-0 will-change-transform"
+        style={{ transform: `translateY(${parallaxOffset}px)` }}
+      >
+        <img
+          src={property.hero.image}
+          alt="The Valley Gaze Penthouse — valley and mountain views in Dehradun"
+          className="absolute inset-0 h-[120%] w-full object-cover"
+          fetchPriority="high"
+        />
+      </div>
       {/* Multi-layer overlay for legibility (stronger for WCAG contrast) */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/85" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/15 to-transparent" />
       <div className="absolute inset-0 bg-grain opacity-30 mix-blend-overlay" />
 
       {/* Content */}
-      <div className="relative h-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-16 sm:pb-20 lg:pb-24 pt-24">
+      <div
+        className="relative h-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col justify-end pb-16 sm:pb-20 lg:pb-24 pt-24 transition-opacity duration-300"
+        style={{ opacity: contentOpacity }}
+      >
         <Reveal delay={0.05}>
           <div className="flex items-center gap-2 mb-4 sm:mb-5">
             <Badge className="bg-white/20 backdrop-blur-md text-white border-white/30 hover:bg-white/25 rounded-full px-3 py-1 shadow-lg shadow-black/20">

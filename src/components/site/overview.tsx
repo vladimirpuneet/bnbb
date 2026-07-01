@@ -79,10 +79,10 @@ export function Overview() {
             </Reveal>
             {property.highlights.map((h, i) => (
               <Reveal key={h.title} delay={0.2 + i * 0.08}>
-                <Card className="overflow-hidden border-border/70 hover:border-primary/30 transition-colors group">
+                <Card className="overflow-hidden border-border/70 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 transition-all duration-300 hover:-translate-y-0.5 group">
                   <CardContent className="p-0 flex">
-                    <div className="grid place-items-center w-16 sm:w-20 bg-primary/8 group-hover:bg-primary/12 transition-colors shrink-0">
-                      <Icon name={h.icon} className="h-7 w-7 text-primary" />
+                    <div className="grid place-items-center w-16 sm:w-20 bg-gradient-to-br from-primary/10 to-primary/5 group-hover:from-primary/15 group-hover:to-primary/8 transition-colors shrink-0">
+                      <Icon name={h.icon} className="h-7 w-7 text-primary transition-transform group-hover:scale-110" />
                     </div>
                     <div className="p-4 sm:p-5 flex-1">
                       <h3 className="font-display text-lg font-semibold leading-tight">{h.title}</h3>
