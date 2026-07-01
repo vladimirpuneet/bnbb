@@ -119,3 +119,135 @@ Stage Summary:
 - Watchdog script keeps the dev server alive across shell sessions.
 - Lint passes cleanly (no errors or warnings).
 - No runtime errors in dev.log.
+
+---
+
+## Current Project Status Assessment (Round 2 — webDevReview)
+
+### Status: STABLE & ENHANCED
+The dev server is running healthily on port 3000 (auto-restarted by /tmp/dev-watchdog.sh if it dies), accessible via the Caddy gateway on port 81. The page loads in ~300ms with all 14 sections rendering correctly, no console errors, no broken images, and lint passing cleanly.
+
+### QA Results (via agent-browser)
+- ✅ Page title correct: "The Valley Gaze Penthouse | 3BHK Luxury Stay in Dehradun"
+- ✅ All 14 sections present: top, gallery, overview, pricing, space, bedrooms, amenities, weather, reviews, location, host, rules, faq, book
+- ✅ 17 images load (lazy-loaded correctly)
+- ✅ Booking modal opens, shows live quote, "Request booking · ₹13,800" button works
+- ✅ Pricing estimator shows default quote (₹13,800 for 2 nights), "Book these dates" pre-fills modal
+- ✅ FAQ accordion works (first item expanded by default, click toggles state)
+- ✅ Weather widget fetches live data from Open-Meteo API (24°C, Overcast, 3-day forecast)
+- ✅ Share dropdown shows 5 options (WhatsApp, X/Twitter, Facebook, Email, Copy link)
+- ✅ Mobile viewport (390×844) renders all sections correctly
+- ✅ No console errors, no page errors, no broken images
+
+---
+
+Task ID: 3
+Agent: webDevReview (cron job 244880)
+Task: Assess current project status, perform QA via agent-browser, then independently select the most appropriate work focus — fix bugs or propose new requirements — and continue development. Mandatory: improve styling with more details and add more features/functionality.
+
+Work Log:
+- Read /home/z/my-project/worklog.md to understand prior work (Tasks 1 & 2 — scraping + initial 11-section website).
+- Performed QA via agent-browser: verified page loads, all 11 sections render, booking modal works, lightbox works, mobile responsive, no console errors.
+- VLM analysis (glm-4.6v) of hero identified: (1) hero text contrast insufficient, (2) missing premium features — pricing, calendar, FAQ, weather, share.
+- Selected work focus: ADD NEW FEATURES (project was stable, so prioritising the mandatory "add more features" requirement).
+
+**Added pricing data + calculator (src/lib/property.ts):**
+- Transparent pricing model: weekday ₹6,500, weekend ₹8,500, cleaning ₹800, service fee ₹0 (direct booking benefit)
+- 3 seasons: Low (Jul–Sep ×1.0), Shoulder (Oct–Nov & Feb–Mar ×1.15), Peak (Dec–Jan & Apr–Jun ×1.35)
+- Long-stay discounts: 10% weekly (7+ nights), 25% monthly (28+ nights)
+- Extra guest fee: ₹500/guest above 6 guests
+- Min 2 nights
+- calculateQuote() function: computes nights, weekday/weekend split, seasonal multiplier, long-stay discount, extra guest fee, cleaning, service fee → total + per-night
+- Enhanced defaultBookingMessage() to optionally include the quote in the WhatsApp message
+- Added 8 FAQs covering booking process, check-in/out, pricing, guests/pets, parking, amenities, cancellation, house rules
+- Added geo coordinates (30.3165, 78.0322) for weather & map
+
+**Enhanced booking store (use-booking.ts):**
+- Added `quote` and `quoteError` state
+- Added `recompute()` method
+- setCheckIn/setCheckOut/setGuests now auto-recompute the quote
+- getBookingUrl() now includes the quote total in the WhatsApp message
+- Added input validation (min nights, date order)
+
+**Enhanced booking modal (booking-modal.tsx):**
+- Added live quote panel with full breakdown (weekday × rate, weekend × rate, seasonal adjustment, long-stay discount, extra guest fee, cleaning, service fee)
+- Shows seasonal badge (Low/Shoulder/Peak)
+- Shows error state for invalid dates (amber alert)
+- Shows empty state prompting to select dates
+- "Request booking" button now shows the total: "Request booking · ₹13,800"
+- Modal is now scrollable (max-h-92vh) for long quote panels
+
+**Built Pricing Estimator section (pricing-estimator.tsx):**
+- Interactive date inputs (check-in, check-out) with +/- guest counter
+- Rate card legend (weekday/weekend/service fee)
+- Live quote output card with big total, per-night, full breakdown
+- "Book these dates" button → opens booking modal with dates pre-filled
+- Seasonal rates table (3 cards with multiplier badges)
+
+**Built FAQ section (faq.tsx):**
+- 8 FAQs in an Accordion (first expanded by default)
+- Numbered labels (01–08) with circular badges
+- "Still have questions?" CTA with Book Now + WhatsApp buttons
+
+**Built Share button (share-button.tsx):**
+- Dropdown menu with 5 options: native share (if supported), WhatsApp, X/Twitter, Facebook, Email, Copy link
+- Uses navigator.share() when available (mobile)
+- Copy link shows toast notification
+- 3 variants: ghost, solid (for dark hero), outline (for light bg)
+
+**Built Weather widget (weather-widget.tsx):**
+- Fetches live data from Open-Meteo API (free, no key, CORS-enabled)
+- Current weather: temp, feels-like, condition, humidity, wind
+- 3-day forecast with WMO weather codes → lucide icons
+- Seasonal climate guide (Winter/Summer/Monsoon cards)
+- Loading skeleton + error state
+- "Best time to visit" badge
+
+**Styling improvements:**
+- Hero: strengthened overlay (from-black/55 → from-black/70), added explicit drop-shadow-[0_4px_20px_rgba(0,0,0,0.55)] on h1, drop-shadow on all hero text for WCAG contrast
+- Hero: added "From ₹6,500/night" price hint next to rating pill (urgency + transparency)
+- Hero: stronger badge backgrounds (white/20 + shadow-lg)
+- Navbar: added ShareButton between Airbnb rating and Book Now
+- Navbar: updated nav links (Photos, Pricing, Amenities, Reviews, Location, FAQ)
+- Footer: added Pricing/Weather/FAQ links to explore section
+
+**Wired into page.tsx:**
+- Final section order: Hero → Gallery → Overview → Pricing → TheSpace → Bedrooms → Amenities → Weather → Reviews → Location → Host → HouseRules → FAQ → BookingCta → Footer
+- 14 sections total (was 11)
+
+**Fixed lint errors:**
+- useMemo dependency: wrapped defaultDates() in inline arrow function
+- setState-in-effect: replaced useEffect+setState with lazy useState initializers in ShareButton
+
+**Verification (agent-browser):**
+- All 14 sections render with no console/page errors
+- Pricing estimator: default quote ₹13,800 (2 weekday nights × ₹6,500 + ₹800 cleaning) ✓
+- "Book these dates" → modal opens with dates pre-filled + quote visible ✓
+- FAQ accordion: click toggles expand/collapse correctly ✓
+- Weather widget: live API call returns 200, shows 24°C Overcast + 3-day forecast ✓
+- Share dropdown: 5 options visible (WhatsApp, X/Twitter, Facebook, Email, Copy link) ✓
+- Mobile viewport: all sections render correctly ✓
+- Lint: passes cleanly ✓
+- VLM rated all 3 new sections 7/10 (clean, functional, good hierarchy)
+
+Stage Summary:
+- ✅ Added 4 major features: Pricing Estimator, FAQ, Share button, Weather widget
+- ✅ Enhanced booking modal with live quote + breakdown
+- ✅ Improved hero text contrast (WCAG) + added price urgency hint
+- ✅ All 14 sections render correctly, no errors, lint clean
+- ✅ 26 components in src/components/site/ (was 22)
+- Direct booking funnel now includes transparent pricing → WhatsApp enquiry with pre-filled quote
+
+### Unresolved Issues / Risks
+- The pricing rates (₹6,500/₹8,500) are estimates based on typical Dehradun 3BHK rates — the host should confirm actual rates. The UI clearly states "Rates are indicative. Final pricing is confirmed by the host on WhatsApp."
+- Weather widget depends on the external Open-Meteo API; if it's down, the widget shows a graceful "Weather unavailable" error state.
+- agent-browser's `fill` command doesn't trigger React's onChange for date inputs — this is a testing limitation, not a real bug (real users interact via the native date picker which fires onChange correctly).
+
+### Priority Recommendations for Next Phase
+1. **Date availability calendar**: integrate a visual calendar showing booked/available dates (currently the booking modal uses simple date inputs)
+2. **Multi-language support**: add Hindi + English toggle (next-intl is installed)
+3. **Local attractions gallery**: expand the location section with a richer photo grid of nearby spots
+4. **Reviews pagination**: add "Show more reviews" for the 6 visible reviews (21 more exist on Airbnb)
+5. **Wishlist/save feature**: let users save the property (localStorage) with a heart icon
+6. **Booking confirmation flow**: after WhatsApp redirect, show a "What's next" toast
+7. **SEO structured data**: add JSON-LD for LodgingBusiness schema

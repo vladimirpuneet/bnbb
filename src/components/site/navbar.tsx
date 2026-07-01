@@ -4,16 +4,17 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
+import { ShareButton } from "./share-button";
 import { useBooking } from "./use-booking";
 import { property, buildWhatsappLink, defaultBookingMessage } from "@/lib/property";
 
 const NAV_LINKS = [
   { href: "#gallery", label: "Photos" },
-  { href: "#overview", label: "Overview" },
+  { href: "#pricing", label: "Pricing" },
   { href: "#amenities", label: "Amenities" },
   { href: "#reviews", label: "Reviews" },
   { href: "#location", label: "Location" },
-  { href: "#host", label: "Host" },
+  { href: "#faq", label: "FAQ" },
 ];
 
 export function Navbar() {
@@ -104,6 +105,10 @@ export function Navbar() {
               <span className="opacity-70">Airbnb</span>
               <Icon name="arrowUpRight" className="h-3.5 w-3.5 opacity-70" />
             </a>
+
+            <div className="hidden sm:block">
+              <ShareButton variant={scrolled ? "outline" : "solid"} />
+            </div>
 
             <Button
               onClick={openBooking}

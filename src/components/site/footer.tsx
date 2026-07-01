@@ -58,10 +58,13 @@ export function Footer() {
               {[
                 { href: "#gallery", label: "Photo gallery" },
                 { href: "#overview", label: "Overview" },
+                { href: "#pricing", label: "Pricing estimator" },
                 { href: "#amenities", label: "Amenities" },
+                { href: "#weather", label: "Weather" },
                 { href: "#reviews", label: "Reviews" },
                 { href: "#location", label: "Location" },
                 { href: "#host", label: "Meet the host" },
+                { href: "#faq", label: "FAQ" },
                 { href: "#rules", label: "House rules" },
               ].map((l) => (
                 <li key={l.href}>

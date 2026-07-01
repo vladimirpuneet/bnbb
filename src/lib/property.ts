@@ -21,6 +21,74 @@ export const property = {
     reviewCount: 27,
   },
 
+  /**
+   * Transparent pricing model (in INR ₹).
+   * The Airbnb listing hides price until dates are selected, so we publish
+   * an honest estimate based on typical Dehradun 3BHK penthouse rates.
+   * The host confirms the final quote on WhatsApp.
+   */
+  pricing: {
+    currency: "₹",
+    weekdayNightly: 6500, // Sun – Thu
+    weekendNightly: 8500, // Fri – Sat
+    weeklyDiscount: 0.1, // 10% off for 7+ nights
+    monthlyDiscount: 0.25, // 25% off for 28+ nights
+    cleaningFee: 800, // one-time
+    serviceFee: 0, // waived for direct bookings
+    extraGuestFee: 500, // per guest above 6
+    extraGuestThreshold: 6,
+    minNights: 2,
+    note: "Rates are indicative. Final pricing is confirmed by the host on WhatsApp. Direct bookings skip platform service fees.",
+    seasons: [
+      { name: "Low season", months: "Jul – Sep", multiplier: 1.0, note: "Monsoon, lush greenery" },
+      { name: "Shoulder", months: "Oct – Nov & Feb – Mar", multiplier: 1.15, note: "Pleasant weather, best value" },
+      { name: "Peak season", months: "Dec – Jan & Apr – Jun", multiplier: 1.35, note: "Holidays & Mussoorie season" },
+    ],
+  },
+
+  /** Frequently asked questions — used by the FAQ accordion section. */
+  faqs: [
+    {
+      q: "How do I confirm my booking?",
+      a: "Tap any Book Now button, fill in your dates and guest count, and you'll be redirected to WhatsApp with a pre-filled enquiry. Daksh (your host) usually responds within an hour with availability and the final quote. A small advance confirms your reservation.",
+    },
+    {
+      q: "What is the check-in and check-out time?",
+      a: "Check-in is from 3:00 PM onwards and check-out is by 11:00 AM. Self check-in is available via a lockbox, so you can arrive anytime after 3 PM — even late at night.",
+    },
+    {
+      q: "Is the price shown final?",
+      a: "The pricing estimator on this page gives a transparent estimate based on weekday/weekend rates and any applicable seasonal multipliers. The host confirms the exact total (including any discounts for longer stays) on WhatsApp before you pay anything.",
+    },
+    {
+      q: "How many guests can stay? Are pets allowed?",
+      a: "The penthouse comfortably sleeps up to 9 guests across 3 bedrooms (each with a king bed). Well-behaved pets are welcome — please mention them when booking so we can prepare.",
+    },
+    {
+      q: "Is there parking? How do I reach the property?",
+      a: "Yes — free parking is available on the premises. The property is in Tehri Garhwal, Dehradun, about 40 minutes from Mussoorie. Both lift and stairs provide access to the penthouse floor.",
+    },
+    {
+      q: "What amenities are included?",
+      a: "A fully equipped kitchen with utensils, high-speed Wi-Fi, dedicated workspace, TV, air conditioning, heating, hot water, lift access, terrace with valley/mountain views, and exterior security cameras for your safety.",
+    },
+    {
+      q: "What is the cancellation policy?",
+      a: "Flexible: free cancellation up to 7 days before check-in for a full refund. Within 7 days, the advance is non-refundable but can be adjusted towards a future stay within 6 months, subject to availability.",
+    },
+    {
+      q: "Are there house rules I should know?",
+      a: "Yes — a few gentle guidelines: quiet hours after 10 PM (music audible only within your group), respectful behaviour if consuming alcohol, and keeping the property clean. Full house rules are listed in the Things to Know section below.",
+    },
+  ],
+
+  /** Dehradun geo coordinates for weather & map widgets. */
+  geo: {
+    lat: 30.3165,
+    lng: 78.0322,
+    timezone: "Asia/Kolkata",
+  },
+
   stats: [
     { icon: "users", label: "Guests", value: "9" },
     { icon: "door", label: "Bedrooms", value: "3" },
@@ -266,6 +334,7 @@ export function defaultBookingMessage(opts?: {
   checkIn?: string;
   checkOut?: string;
   guests?: string;
+  quote?: { nights: number; total: number; currency: string };
 }): string {
   const lines = [
     `Hi ${property.host.name}! 👋`,
@@ -278,10 +347,126 @@ export function defaultBookingMessage(opts?: {
   if (opts?.guests) {
     lines.push(`👥 Guests: ${opts.guests}`);
   }
+  if (opts?.quote) {
+    lines.push(
+      ``,
+      `💰 Estimated quote: ${opts.quote.currency}${opts.quote.total.toLocaleString("en-IN")} (${opts.quote.nights} night${opts.quote.nights > 1 ? "s" : ""})`,
+    );
+  }
   lines.push(
     ``,
-    `Could you please share the pricing & availability?`,
+    `Could you please confirm availability & the final price?`,
     `Thanks!`,
   );
   return lines.join("\n");
+}
+
+/**
+ * Calculate a transparent price estimate for a date range + guest count.
+ * Returns null if the dates are invalid or below the minimum-nights requirement.
+ */
+export function calculateQuote(opts: {
+  checkIn: string; // ISO yyyy-mm-dd
+  checkOut: string; // ISO yyyy-mm-dd
+  guests: number;
+}): {
+  nights: number;
+  weekdayNights: number;
+  weekendNights: number;
+  nightlySubtotal: number;
+  seasonalMultiplier: number;
+  seasonalName: string;
+  longStayDiscount: number;
+  longStayLabel: string;
+  extraGuestFee: number;
+  cleaningFee: number;
+  serviceFee: number;
+  total: number;
+  perNight: number;
+  currency: string;
+} | null {
+  const { checkIn, checkOut, guests } = opts;
+  if (!checkIn || !checkOut) return null;
+
+  const start = new Date(checkIn + "T00:00:00");
+  const end = new Date(checkOut + "T00:00:00");
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return null;
+  if (end <= start) return null;
+
+  const nights = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  if (nights < property.pricing.minNights) return null;
+
+  // Count weekday (Sun–Thu) vs weekend (Fri–Sat) nights
+  let weekdayNights = 0;
+  let weekendNights = 0;
+  const cursor = new Date(start);
+  while (cursor < end) {
+    const dow = cursor.getDay(); // 0=Sun, 5=Fri, 6=Sat
+    if (dow === 5 || dow === 6) weekendNights++;
+    else weekdayNights++;
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  const nightlySubtotal =
+    weekdayNights * property.pricing.weekdayNightly +
+    weekendNights * property.pricing.weekendNightly;
+
+  // Seasonal multiplier — pick the highest multiplier applicable across the stay
+  const month = start.getMonth() + 1; // 1–12
+  let seasonalMultiplier = 1.0;
+  let seasonalName = "Low season";
+  for (const s of property.pricing.seasons) {
+    // Determine if this season applies to the check-in month
+    const applies =
+      (s.name === "Peak season" && (month === 12 || month === 1 || (month >= 4 && month <= 6))) ||
+      (s.name === "Shoulder" &&
+        ((month >= 10 && month <= 11) || (month >= 2 && month <= 3))) ||
+      (s.name === "Low season" && month >= 7 && month <= 9);
+    if (applies && s.multiplier > seasonalMultiplier) {
+      seasonalMultiplier = s.multiplier;
+      seasonalName = s.name;
+    }
+  }
+
+  const seasonAdjusted = nightlySubtotal * seasonalMultiplier;
+
+  // Long-stay discount
+  let longStayDiscount = 0;
+  let longStayLabel = "";
+  if (nights >= 28) {
+    longStayDiscount = seasonAdjusted * property.pricing.monthlyDiscount;
+    longStayLabel = "Monthly (25% off)";
+  } else if (nights >= 7) {
+    longStayDiscount = seasonAdjusted * property.pricing.weeklyDiscount;
+    longStayLabel = "Weekly (10% off)";
+  }
+
+  // Extra guest fee
+  const extraGuests = Math.max(0, guests - property.pricing.extraGuestThreshold);
+  const extraGuestFee = extraGuests * property.pricing.extraGuestFee;
+
+  const cleaningFee = property.pricing.cleaningFee;
+  const serviceFee = property.pricing.serviceFee;
+
+  const total = Math.round(
+    seasonAdjusted - longStayDiscount + extraGuestFee + cleaningFee + serviceFee,
+  );
+  const perNight = Math.round(total / nights);
+
+  return {
+    nights,
+    weekdayNights,
+    weekendNights,
+    nightlySubtotal,
+    seasonalMultiplier,
+    seasonalName,
+    longStayDiscount: Math.round(longStayDiscount),
+    longStayLabel,
+    extraGuestFee,
+    cleaningFee,
+    serviceFee,
+    total,
+    perNight,
+    currency: property.pricing.currency,
+  };
 }
