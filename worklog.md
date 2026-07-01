@@ -933,3 +933,96 @@ Stage Summary:
 5. **Add a "reading progress" indicator per section**: show how far through each section the user has scrolled
 6. **Add keyboard shortcut hints**: e.g., "Press B to Book" with a toast on first visit
 7. **Add a comparison table**: compare this property vs nearby alternatives (price, amenities, rating)
+
+---
+
+## Current Project Status Assessment (Round 9 — webDevReview)
+
+### Status: STABLE & FEATURE-RICH
+The dev server continues to run healthily on port 3000, accessible via port 81. All 16 sections render with no errors, lint passes cleanly. 41 components now live in src/components/site/. New features include keyboard shortcuts (B/G/P/R/H/F/T/?/Esc) with a help dialog, a comparison table section, and a keyboard help button in the navbar.
+
+### QA Results (via agent-browser)
+- ✅ All 16 sections render with no console/page errors (added "comparison")
+- ✅ Lint passes cleanly
+- ✅ Keyboard shortcut B opens booking modal
+- ✅ Keyboard shortcut ? opens help dialog with all 9 shortcuts
+- ✅ Keyboard shortcut G jumps to gallery (scrollY: 837, galleryTop: 64)
+- ✅ Comparison table: 12 rows, 4 columns, correct data
+- ✅ Navbar ? button present and functional
+- ✅ Parallax still works (translateY 0→200px)
+- ✅ VLM rated comparison table 7/10 (clean, functional, clear structure)
+
+---
+
+Task ID: 10
+Agent: webDevReview (cron job 244880, round 9)
+Task: Assess current project status, perform QA via agent-browser, then independently select the most appropriate work focus — fix bugs or propose new requirements — and continue development. Mandatory: improve styling with more details and add more features/functionality.
+
+Work Log:
+- Read /home/z/my-project/worklog.md to understand prior work (Tasks 1-9 — 14-section site with full i18n, SW, image dimensions, section dividers, parallax, preload, reduced-motion, card hover polish).
+- Performed QA via agent-browser: verified page loads, all 14 sections render, booking modal works, parallax works, no errors, lint clean.
+- Selected work focus: KEYBOARD SHORTCUTS + COMPARISON TABLE (2 major features).
+
+**1. Keyboard shortcuts (keyboard-shortcuts.tsx + page.tsx + navbar.tsx):**
+- Created KeyboardShortcuts client component with:
+  - Global keydown listener (passive, ignores inputs/textareas/selects/contenteditable)
+  - 9 shortcuts: B (book), G (gallery), P (pricing), R (reviews), H (host), F (FAQ), T (top), ? (help), Esc (close)
+  - Ignores modifier keys (Ctrl/Cmd/Alt/Meta)
+  - Help dialog (Dialog component) listing all 9 shortcuts with kbd elements
+  - One-time hint toast on first visit ("💡 Keyboard shortcuts available · Press ? to see all shortcuts · Press B to book") with localStorage flag
+  - Toast confirmation on B press ("Booking modal opened · Keyboard shortcut: B")
+- Wired into page.tsx as an overlay component
+- Added ? help button to navbar (hidden on mobile, sm:grid):
+  - Monospace font, bold, with border
+  - Adapts to navbar state (solid on hero, outline when scrolled)
+  - Dispatches a synthetic keydown event with key "?" to trigger the help
+  - aria-label "Show keyboard shortcuts", title "Press ? for keyboard shortcuts"
+- Verified: B opens modal, ? opens help dialog, G jumps to gallery (scrollY 837, galleryTop 64)
+
+**2. Comparison table section (comparison-table.tsx + page.tsx):**
+- Created ComparisonTable client component comparing The Valley Gaze vs Typical Hotel vs Typical Homestay
+- 12 comparison rows: Price per night, Guests, Bedrooms, Valley & mountain view, Private terrace, Fully equipped kitchen, Lift access, Self check-in, Pet-friendly, Free parking, Service fees (direct booking), Distance to Mussoorie
+- Each row has: feature name, icon, Valley Gaze value (highlighted), Typical Hotel value, Typical Homestay value
+- Key rows highlighted (Price per night, Service fees) with bg-primary/3
+- Desktop: full table with sticky headers, zebra striping, green highlight column for Valley Gaze
+- Mobile: card-based layout with 3-column grid per feature
+- Boolean values render as check (green circle) or X (muted circle)
+- String values render with font-medium, highlighted in primary color for key rows
+- Bottom summary: 3 stat cards (₹0 service fees, 9 guests, 4.7★ rating)
+- Fixed parsing error: `₹${6500.toLocaleString()}` → `"₹" + (6500).toLocaleString()` (numbers need parentheses before .method())
+- Wired into page.tsx after PricingEstimator, before TheSpace section divider
+- Verified: 12 rows, 4 columns, correct data (₹6,500–₹8,500 vs ₹8,000–₹15,000 vs ₹4,000–₹7,000)
+
+**Verification (agent-browser):**
+- All 16 sections render with no console/page errors ✓
+- Keyboard shortcut B: opens booking modal ✓
+- Keyboard shortcut ?: opens help dialog with all 9 shortcuts listed ✓
+- Keyboard shortcut G: jumps to gallery (scrollY 837, galleryTop 64) ✓
+- Comparison table: 12 rows, 4 columns, correct data ✓
+- Navbar ? button: present, functional, adapts to scroll state ✓
+- Lint: passes cleanly ✓
+- VLM rated comparison table 7/10 (clean, functional, clear structure)
+
+Stage Summary:
+- ✅ Added 2 major features: keyboard shortcuts (9 shortcuts + help dialog), comparison table (12 rows)
+- ✅ 41 components in src/components/site/ (was 39)
+- ✅ 16 sections total (was 14, added "comparison")
+- ✅ Keyboard shortcuts work globally (B/G/P/R/H/F/T/?/Esc) with help dialog
+- ✅ One-time hint toast on first visit
+- ✅ Comparison table highlights Valley Gaze advantages (₹0 service fees, 9 guests, 4.7★)
+- ✅ All features verified working via agent-browser
+- ✅ Lint clean, no runtime errors
+
+### Unresolved Issues / Risks
+- The keyboard shortcuts use `window.dispatchEvent(new KeyboardEvent(...))` for the navbar ? button — this is a workaround that works because the global keydown listener catches it. A more robust approach would be a shared state, but this is simpler and works.
+- The comparison table data is illustrative (based on typical Dehradun rates) — not scraped from actual competitor listings. The "Typical Hotel" and "Typical Homestay" columns are reasonable estimates.
+- The one-time hint toast uses localStorage flag "valley-gaze:kb-hint-seen" — users who clear storage will see it again.
+
+### Priority Recommendations for Next Phase
+1. **Translate property content**: create a Hindi version of property.ts (description, FAQs, amenities, reviews) for full localization
+2. **Migrate to next/image**: replace <img> with next/image for automatic responsive sizing, modern formats (WebP/AVIF)
+3. **Analytics integration**: add privacy-friendly analytics (Plausible/Umami) to track booking funnel + keyboard shortcut usage
+4. **A/B test booking CTA**: try different button colors/positions to optimize conversion
+5. **Add a "reading progress" indicator per section**: show how far through each section the user has scrolled
+6. **Add a virtual tour / 360° view**: if the host provides 360° photos, embed an interactive viewer
+7. **Add guest reviews filtering by traveler type**: (couples, families, solo, business) for more relevant reviews

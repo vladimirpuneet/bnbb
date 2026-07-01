@@ -136,6 +136,23 @@ export function Navbar() {
               {t("nav.bookNow")}
             </Button>
 
+            {/* Keyboard shortcuts help button */}
+            <button
+              onClick={() => {
+                // Dispatch a custom keydown event to trigger the shortcuts help
+                window.dispatchEvent(new KeyboardEvent("keydown", { key: "?" }));
+              }}
+              className={`hidden sm:grid place-items-center h-9 w-9 rounded-full text-xs font-mono font-bold transition-colors ${
+                scrolled
+                  ? "text-foreground/60 hover:bg-secondary/70 hover:text-foreground border border-border/60"
+                  : "text-white/70 hover:bg-white/15 hover:text-white border border-white/20"
+              }`}
+              aria-label="Show keyboard shortcuts"
+              title="Press ? for keyboard shortcuts"
+            >
+              ?
+            </button>
+
             <button
               onClick={() => setMobileOpen((v) => !v)}
               className={`lg:hidden grid place-items-center h-10 w-10 rounded-full transition-colors ${

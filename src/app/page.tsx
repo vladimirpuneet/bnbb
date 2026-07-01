@@ -3,6 +3,7 @@ import { Hero } from "@/components/site/hero";
 import { Gallery } from "@/components/site/gallery";
 import { Overview } from "@/components/site/overview";
 import { PricingEstimator } from "@/components/site/pricing-estimator";
+import { ComparisonTable } from "@/components/site/comparison-table";
 import { TheSpace } from "@/components/site/the-space";
 import { Bedrooms } from "@/components/site/bedrooms";
 import { Amenities } from "@/components/site/amenities";
@@ -22,6 +23,7 @@ import { ScrollProgress } from "@/components/site/scroll-progress";
 import { SectionToc } from "@/components/site/section-toc";
 import { SkipLink } from "@/components/site/skip-link";
 import { SectionDivider } from "@/components/site/section-divider";
+import { KeyboardShortcuts } from "@/components/site/keyboard-shortcuts";
 
 export default function Home() {
   return (
@@ -36,6 +38,7 @@ export default function Home() {
         <SectionDivider variant="wave" color="secondary" />
         <Overview />
         <PricingEstimator />
+        <ComparisonTable />
         <SectionDivider variant="mountains" color="background" />
         <TheSpace />
         <Bedrooms />
@@ -58,6 +61,7 @@ export default function Home() {
       <Lightbox />
       <MobileBookingBar />
       <FloatingActions />
+      <KeyboardShortcuts />
     </div>
   );
 }
