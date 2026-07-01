@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
+import { DateCalendar } from "./date-calendar";
 import { useBooking } from "./use-booking";
 import { property, calculateQuote } from "@/lib/property";
 
@@ -31,8 +32,6 @@ export function PricingEstimator() {
   const [checkIn, setCheckIn] = useState(defaults.checkIn);
   const [checkOut, setCheckOut] = useState(defaults.checkOut);
   const [guests, setGuests] = useState("2");
-
-  const today = new Date().toISOString().split("T")[0];
 
   const quote = useMemo(
     () => calculateQuote({ checkIn, checkOut, guests: parseInt(guests || "1", 10) }),
@@ -70,36 +69,13 @@ export function PricingEstimator() {
           <Reveal>
             <Card className="border-border/70 overflow-hidden">
               <CardContent className="p-6 sm:p-8 space-y-5">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="est-checkin" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                      <Icon name="calendar" className="inline h-3.5 w-3.5 mr-1" />
-                      Check-in
-                    </Label>
-                    <Input
-                      id="est-checkin"
-                      type="date"
-                      min={today}
-                      value={checkIn}
-                      onChange={(e) => setCheckIn(e.target.value)}
-                      className="bg-background"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="est-checkout" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                      <Icon name="calendar" className="inline h-3.5 w-3.5 mr-1" />
-                      Check-out
-                    </Label>
-                    <Input
-                      id="est-checkout"
-                      type="date"
-                      min={checkIn || today}
-                      value={checkOut}
-                      onChange={(e) => setCheckOut(e.target.value)}
-                      className="bg-background"
-                    />
-                  </div>
-                </div>
+                {/* Visual date calendar (same as booking modal) */}
+                <DateCalendar
+                  checkIn={checkIn}
+                  checkOut={checkOut}
+                  onCheckInChange={setCheckIn}
+                  onCheckOutChange={setCheckOut}
+                />
 
                 <div className="space-y-1.5">
                   <Label htmlFor="est-guests" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">

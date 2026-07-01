@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
+import { BlurImage } from "./blur-image";
 import { openLightbox } from "./lightbox";
 import { property } from "@/lib/property";
 import { cn } from "@/lib/utils";
@@ -56,21 +57,21 @@ export function Gallery() {
                   spanClass[img.span] || "row-span-1",
                 )}
               >
-                <img
+                <BlurImage
                   src={img.src}
                   alt={img.caption}
+                  wrapperClassName="absolute inset-0 h-full w-full"
                   className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
-                  loading={i < 4 ? "eager" : "lazy"}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
                   <div className="flex items-center gap-1.5 text-white text-xs sm:text-sm font-medium">
                     <Icon name="camera" className="h-3.5 w-3.5" />
                     {img.caption}
                   </div>
                 </div>
                 {/* Top-right expand icon */}
-                <div className="absolute top-2.5 right-2.5 grid place-items-center h-7 w-7 rounded-full bg-white/15 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300">
+                <div className="absolute top-2.5 right-2.5 grid place-items-center h-7 w-7 rounded-full bg-white/15 backdrop-blur-md text-white opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none">
                   <Icon name="arrowUpRight" className="h-3.5 w-3.5" />
                 </div>
               </button>
