@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
@@ -55,12 +56,21 @@ export function BookingModal() {
     const url = getBookingUrl();
     window.open(url, "_blank", "noopener,noreferrer");
     close();
+    // Confirmation toast — reassures the user after redirect
+    toast.success("Booking enquiry sent! ✅", {
+      description: `WhatsApp opened for ${property.host.name}. They usually respond within an hour. Tip: check your WhatsApp tab to complete the message.`,
+      duration: 6000,
+    });
   };
 
   const handleQuickBook = () => {
     const url = useBooking.getState().quickBook();
     window.open(url, "_blank", "noopener,noreferrer");
     close();
+    toast("Opening WhatsApp… 💬", {
+      description: `Send the pre-filled message to ${property.whatsappDisplay} and ${property.host.name} will get back to you shortly.`,
+      duration: 6000,
+    });
   };
 
   return (

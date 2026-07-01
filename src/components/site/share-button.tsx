@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Icon } from "./icon";
-import { useToast } from "@/hooks/use-toast";
 import { property } from "@/lib/property";
 
 interface ShareButtonProps {
@@ -24,7 +24,6 @@ export function ShareButton({
   className = "",
   label = "Share",
 }: ShareButtonProps) {
-  const { toast } = useToast();
   // Lazily read browser-only APIs once on first client render
   const [url] = useState(() =>
     typeof window !== "undefined" ? window.location.href : property.airbnbUrl,
@@ -50,15 +49,12 @@ export function ShareButton({
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      toast({
-        title: "Link copied!",
+      toast.success("Link copied!", {
         description: "Share it with your travel companions.",
       });
     } catch {
-      toast({
-        title: "Couldn't copy",
+      toast.error("Couldn't copy", {
         description: "Please copy the URL from the address bar.",
-        variant: "destructive",
       });
     }
   };

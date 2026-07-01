@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
+import { StructuredData } from "@/components/site/structured-data";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -58,6 +59,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-background text-foreground`}
       >
+        <StructuredData />
         {children}
         <Toaster />
       </body>

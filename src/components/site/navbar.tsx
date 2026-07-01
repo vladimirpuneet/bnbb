@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { ShareButton } from "./share-button";
+import { SaveButton } from "./save-button";
 import { useBooking } from "./use-booking";
 import { property, buildWhatsappLink, defaultBookingMessage } from "@/lib/property";
 
@@ -108,6 +109,10 @@ export function Navbar() {
 
             <div className="hidden sm:block">
               <ShareButton variant={scrolled ? "outline" : "solid"} />
+            </div>
+
+            <div className="hidden sm:block">
+              <SaveButton variant={scrolled ? "outline" : "solid"} />
             </div>
 
             <Button

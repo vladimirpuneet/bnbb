@@ -18,10 +18,12 @@ import { BookingModal } from "@/components/site/booking-modal";
 import { Lightbox } from "@/components/site/lightbox";
 import { MobileBookingBar } from "@/components/site/mobile-booking-bar";
 import { FloatingActions } from "@/components/site/floating-actions";
+import { ScrollProgress } from "@/components/site/scroll-progress";
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <ScrollProgress />
       <Navbar />
       <main className="flex-1">
         <Hero />
