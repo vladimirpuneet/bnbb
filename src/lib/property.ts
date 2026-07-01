@@ -89,6 +89,19 @@ export const property = {
     timezone: "Asia/Kolkata",
   },
 
+  /**
+   * Booked dates — the calendar shows these as unavailable.
+   * In a real app these would come from the host's calendar API; here we
+   * hardcode a realistic sample of blocked dates relative to "today".
+   * Use the exported getBookedDates() helper to get absolute ISO strings.
+   */
+  bookedDateOffsets: [
+    3, 4, 5, // a 3-night block 3 days from today
+    12, 13, // weekend block
+    20, 21, 22, 23, // a 4-night block
+    31, // single day next month
+  ],
+
   stats: [
     { icon: "users", label: "Guests", value: "9" },
     { icon: "door", label: "Bedrooms", value: "3" },
@@ -393,6 +406,26 @@ export const property = {
 } as const;
 
 export type Property = typeof property;
+
+/**
+ * Generate absolute ISO date strings (yyyy-mm-dd) for booked dates,
+ * relative to "today". Called on the client so the dates are always fresh.
+ */
+export function getBookedDates(): string[] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return property.bookedDateOffsets.map((offset) => {
+    const d = new Date(today);
+    d.setDate(d.getDate() + offset);
+    return d.toISOString().split("T")[0];
+  });
+}
+
+/** Check if a given ISO date string is booked. */
+export function isDateBooked(isoDate: string, booked?: string[]): boolean {
+  const list = booked ?? getBookedDates();
+  return list.includes(isoDate);
+}
 
 /** Build a WhatsApp deep link with an optional pre-filled message */
 export function buildWhatsappLink(message?: string): string {

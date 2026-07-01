@@ -33,6 +33,20 @@ export const metadata: Metadata = {
     "Dehradun valley view",
   ],
   authors: [{ name: "Daksh Thakur" }],
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Valley Gaze Penthouse",
+    statusBarStyle: "default",
+  },
   openGraph: {
     title: "The Valley Gaze Penthouse | 3BHK Luxury Stay in Dehradun",
     description:
@@ -47,6 +61,13 @@ export const metadata: Metadata = {
     description:
       "A serene 3BHK penthouse with stunning valley & mountain views in Dehradun. Book directly via WhatsApp.",
   },
+};
+
+export const viewport = {
+  themeColor: "#2f4a35",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({

@@ -183,3 +183,107 @@
     to { background-position: -200% 0; }
   }
 }
+
+/* ============================================================================
+   Print stylesheet — produces a clean printable property summary
+   ========================================================================== */
+@media print {
+  /* Hide interactive / non-essential elements */
+  header,
+  footer,
+  nav,
+  [aria-label="Section navigation"],
+  .fixed,
+  [data-sonner-toaster],
+  [role="dialog"],
+  button[aria-label*="Share"],
+  button[aria-label*="wishlist"],
+  #book,
+  #faq,
+  #weather {
+    display: none !important;
+  }
+
+  /* Reset colors to print-friendly */
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt;
+  }
+
+  /* Ensure sections print on logical page boundaries */
+  section {
+    page-break-inside: avoid;
+    padding: 12pt 0 !important;
+    border-bottom: 1px solid #ccc;
+  }
+
+  /* Hero — compact one-third page */
+  section#top {
+    height: auto !important;
+    min-height: 0 !important;
+    color: black !important;
+    padding-top: 20pt !important;
+  }
+  section#top img {
+    display: none !important;
+  }
+  section#top .absolute {
+    display: none !important;
+  }
+  section#top .relative > div {
+    color: black !important;
+    text-shadow: none !important;
+  }
+
+  /* Force light backgrounds on cards */
+  .bg-card,
+  .bg-secondary\/40,
+  .bg-secondary\/50,
+  .bg-secondary\/60 {
+    background: white !important;
+  }
+
+  /* Ensure links show their URL */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #555;
+  }
+
+  /* Remove shadows and rounded corners (they don't print well) */
+  .shadow-md,
+  .shadow-lg,
+  .shadow-xl,
+  .shadow-2xl {
+    box-shadow: none !important;
+  }
+  .rounded-2xl,
+  .rounded-3xl,
+  .rounded-xl {
+    border-radius: 4pt !important;
+  }
+
+  /* Expand grid layouts to single column for print */
+  .grid {
+    display: block !important;
+  }
+  .grid > * {
+    margin-bottom: 8pt;
+  }
+
+  /* Ensure images aren't too large on print */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Show a print-only header with property name */
+  .print-only {
+    display: block !important;
+  }
+}
+
+.print-only {
+  display: none;
+}

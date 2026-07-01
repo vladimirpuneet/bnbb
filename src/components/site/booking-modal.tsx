@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
+import { DateCalendar } from "./date-calendar";
 import { useBooking } from "./use-booking";
 import { property } from "@/lib/property";
 
@@ -49,8 +50,6 @@ export function BookingModal() {
       };
     }
   }, [isOpen]);
-
-  const today = new Date().toISOString().split("T")[0];
 
   const handleSubmit = () => {
     const url = getBookingUrl();
@@ -95,37 +94,13 @@ export function BookingModal() {
         </div>
 
         <div className="p-5 sm:p-6 space-y-4">
-          {/* Date row */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="check-in" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                <Icon name="calendar" className="inline h-3.5 w-3.5 mr-1" />
-                Check-in
-              </Label>
-              <Input
-                id="check-in"
-                type="date"
-                min={today}
-                value={checkIn}
-                onChange={(e) => setCheckIn(e.target.value)}
-                className="bg-background"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="check-out" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                <Icon name="calendar" className="inline h-3.5 w-3.5 mr-1" />
-                Check-out
-              </Label>
-              <Input
-                id="check-out"
-                type="date"
-                min={checkIn || today}
-                value={checkOut}
-                onChange={(e) => setCheckOut(e.target.value)}
-                className="bg-background"
-              />
-            </div>
-          </div>
+          {/* Visual date calendar */}
+          <DateCalendar
+            checkIn={checkIn}
+            checkOut={checkOut}
+            onCheckInChange={setCheckIn}
+            onCheckOutChange={setCheckOut}
+          />
 
           {/* Guests + name */}
           <div className="grid grid-cols-2 gap-3">

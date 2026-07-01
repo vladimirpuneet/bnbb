@@ -375,3 +375,125 @@ Stage Summary:
 5. **Testimonial video**: if the host provides a short video testimonial, embed it in the reviews section
 6. **Print-friendly stylesheet**: add @media print rules so users can print a summary of the property
 7. **PWA manifest**: add a web app manifest for installable PWA support
+
+---
+
+## Current Project Status Assessment (Round 4 — webDevReview)
+
+### Status: STABLE & PRODUCTION-READY
+The dev server continues to run healthily on port 3000 (auto-restarted by /tmp/dev-watchdog.sh), accessible via the Caddy gateway on port 81. The page loads in ~300-1000ms with all 14 sections rendering correctly, no console errors, and lint passing cleanly. 32 components now live in src/components/site/. PWA manifest + icons are served, SEO JSON-LD is present, and the booking flow works end-to-end with a visual date calendar.
+
+### QA Results (via agent-browser)
+- ✅ All 14 sections render: top, gallery, overview, pricing, space, bedrooms, amenities, weather, reviews, location, host, rules, faq, book
+- ✅ JSON-LD present: type "LodgingBusiness" with 15 reviews, 2 offers, geo
+- ✅ PWA manifest served at /manifest.webmanifest (HTTP 200) with 3 icons + 3 shortcuts
+- ✅ Theme-color meta (#2f4a35), apple-touch-icon, favicon all present
+- ✅ Booking modal opens with visual date calendar (replaces plain date inputs)
+- ✅ Date calendar: 13 disabled dates (booked + past), 22 available, check-in selection auto-opens checkout
+- ✅ Quote calculates correctly: 1-3 Jul = ₹13,800 (2 weekday nights × ₹6,500 + ₹800 cleaning)
+- ✅ Section TOC: 12 nav buttons, active state tracks current section, click jumps to section
+- ✅ No console errors on our page
+- ✅ Lint passes cleanly
+
+---
+
+Task ID: 5
+Agent: webDevReview (cron job 244880, round 4)
+Task: Assess current project status, perform QA via agent-browser, then independently select the most appropriate work focus — fix bugs or propose new requirements — and continue development. Mandatory: improve styling with more details and add more features/functionality.
+
+Work Log:
+- Read /home/z/my-project/worklog.md to understand prior work (Tasks 1-4 — scraping + 14-section site with pricing/FAQ/share/weather/JSON-LD/wishlist/reviews-pagination/attractions/scroll-progress).
+- Performed QA via agent-browser: verified page loads, all 14 sections render, JSON-LD present, booking modal works, no errors, lint clean.
+- Selected work focus: ADD NEW FEATURES (project was stable — tackled 4 priority recommendations from round 3).
+
+**1. Date Availability Calendar (date-calendar.tsx + booking-modal.tsx):**
+- Created DateCalendar client component using shadcn Calendar (react-day-picker) + Popover
+- Two-popover date range picker: check-in popover → auto-opens checkout popover on selection
+- Booked dates disabled (13 total: 3,4,5 / 12,13 / 20,21,22,23 / 31 day offsets from today)
+- Past dates disabled ({ before: today })
+- Min 2 nights enforced: checkout calendar disables dates before checkIn + minNights
+- rangeOverlapsBooking() check prevents selecting a range that spans a booked date
+- Visual legend at bottom of calendar (Booked / Selected / Min nights)
+- Display format: "1 Jul 2026" (en-IN locale)
+- Added bookedDateOffsets + getBookedDates() + isDateBooked() helpers to property.ts
+- Replaced plain <Input type="date"> in booking-modal.tsx with <DateCalendar>
+- Removed unused `today` variable from modal
+- Verified: check-in 1 Jul, checkout 3 Jul → quote ₹13,800 (2 weekday × ₹6,500 + ₹800)
+
+**2. Sticky Section TOC (section-toc.tsx + page.tsx):**
+- Created SectionToc client component: floating mini-nav fixed to right edge of viewport
+- 12 section dots (gallery, overview, pricing, space, bedrooms, amenities, weather, reviews, location, host, rules, faq)
+- Active state tracked via IntersectionObserver (rootMargin: -30% 0px -60% 0px)
+- Active dot: larger (h-2.5 w-2.5), primary color, ring-4 ring-primary/15
+- Inactive dot: smaller (h-2 w-2), foreground/25, hover foreground/50
+- Hover shows label tooltip (bg-foreground/90 text-background)
+- Click scrolls to section (smooth, block:start)
+- Hidden below xl breakpoint (1280px) — navbar mobile menu serves that role on smaller screens
+- Verified: 12 buttons present, active state correctly tracks "Reviews" and "Pricing" on scroll, click jumps to section
+
+**3. PWA Manifest + Icons (public/ + layout.tsx):**
+- Generated 5 icons from hero image using sharp:
+  - icon-192.png (192×192, any purpose)
+  - icon-512.png (512×512, any purpose)
+  - icon-maskable-512.png (512×512, maskable — with green padding for safe zone)
+  - apple-touch-icon.png (180×180)
+  - favicon.ico (32×32)
+- Created manifest.webmanifest with:
+  - name/short_name/description
+  - start_url "/", display "standalone"
+  - background_color "#f5f0e8" (cream), theme_color "#2f4a35" (forest green)
+  - 3 icons (192, 512, maskable-512)
+  - 3 shortcuts: Book Now, View Photos, Check Pricing
+  - categories: travel, lifestyle, business
+  - lang: en-IN
+- Updated layout.tsx metadata: manifest, icons (icon/apple arrays), appleWebApp config
+- Added viewport export with themeColor "#2f4a35"
+- Verified: all 5 assets serve HTTP 200, manifest link present in <head>, theme-color meta present
+
+**4. Print Stylesheet (globals.css):**
+- Added comprehensive @media print rules:
+  - Hides: header, footer, nav, fixed elements, toasters, dialogs, share/wishlist buttons, #book/#faq/#weather sections
+  - Resets body to white background, black text, 11pt font
+  - section page-break-inside: avoid, 12pt padding, border-bottom separator
+  - Hero: removes image + overlays, shows text in black
+  - Cards: white background, no shadows, 4pt border-radius
+  - Links: show URL in parentheses after text (a[href]::after)
+  - Grids: collapse to single column
+  - Images: max-width 100%
+  - .print-only class: hidden on screen, visible on print
+
+**Verification (agent-browser):**
+- All 14 sections render with no console/page errors ✓
+- PWA manifest served at /manifest.webmanifest (HTTP 200) ✓
+- 5 icon assets all serve HTTP 200 ✓
+- theme-color meta = "#2f4a35" ✓
+- apple-touch-icon link present ✓
+- Date calendar: 13 disabled dates, 22 available ✓
+- Date selection: check-in 1 Jul → checkout 3 Jul → quote ₹13,800 ✓
+- Checkout auto-opens after check-in selection ✓
+- Section TOC: 12 buttons, active state tracks scroll, click jumps to section ✓
+- Lint: passes cleanly ✓
+- VLM rated calendar modal 7/10 (clear hierarchy, intuitive date selection, color-coded indicators)
+
+Stage Summary:
+- ✅ Added 4 major features: Date Availability Calendar, Section TOC, PWA Manifest+Icons, Print Stylesheet
+- ✅ 32 components in src/components/site/ (was 30)
+- ✅ Booking flow now uses visual month calendar with booked-date disabling instead of plain date inputs
+- ✅ Site is now installable as a PWA with custom icons and shortcuts
+- ✅ Print-friendly output for users who want a physical summary
+- ✅ All features verified working via agent-browser
+
+### Unresolved Issues / Risks
+- The booked dates are hardcoded offsets from "today" for demo purposes. In production, these would come from the host's calendar API (e.g., iCal feed from Airbnb).
+- The maskable icon uses a solid green background which may look different on various Android launchers — tested with the safe zone (80% center) in mind.
+- The print stylesheet hides the weather widget (since live API data wouldn't print meaningfully) and the FAQ (to keep the printout concise).
+- The Section TOC is only visible on xl+ screens (≥1280px) to avoid overlapping with content on smaller desktop screens.
+
+### Priority Recommendations for Next Phase
+1. **Multi-language support**: add Hindi + English toggle using next-intl (already installed) — translate the static content in property.ts
+2. **Image blur-up placeholders**: generate low-res blurred versions of gallery images for perceived performance
+3. **Booking calendar inline (in pricing section)**: embed the date calendar directly in the Pricing Estimator section (currently uses native date inputs) for consistency
+4. **Testimonial video embed**: if the host provides a short video, embed it in the reviews or host section
+5. **Accessibility audit**: add skip links, ensure all interactive elements have proper ARIA labels, test with screen readers
+6. **Performance optimization**: add width/height attributes to images to prevent layout shift, consider next/image for automatic optimization
+7. **Analytics**: add privacy-friendly analytics (e.g., Plausible) to track booking funnel conversion
