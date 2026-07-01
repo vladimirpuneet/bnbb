@@ -14,6 +14,7 @@ import { Location } from "@/components/site/location";
 import { Host } from "@/components/site/host";
 import { HouseRules } from "@/components/site/house-rules";
 import { Faq } from "@/components/site/faq";
+import { NewsletterSignup } from "@/components/site/newsletter-signup";
 import { BookingCta } from "@/components/site/booking-cta";
 import { Footer } from "@/components/site/footer";
 import { BookingModal } from "@/components/site/booking-modal";
@@ -25,6 +26,7 @@ import { SectionToc } from "@/components/site/section-toc";
 import { SkipLink } from "@/components/site/skip-link";
 import { SectionDivider } from "@/components/site/section-divider";
 import { KeyboardShortcuts } from "@/components/site/keyboard-shortcuts";
+import { SocialProof } from "@/components/site/social-proof";
 
 export default function Home() {
   return (
@@ -54,6 +56,7 @@ export default function Home() {
         <Host />
         <HouseRules />
         <Faq />
+        <NewsletterSignup />
         <BookingCta />
       </main>
       <Footer />
@@ -64,6 +67,7 @@ export default function Home() {
       <MobileBookingBar />
       <FloatingActions />
       <KeyboardShortcuts />
+      <SocialProof />
     </div>
   );
 }

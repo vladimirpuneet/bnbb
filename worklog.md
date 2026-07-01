@@ -1124,3 +1124,95 @@ Stage Summary:
 5. **Add a "Recently booked" social proof widget**: show recent booking activity to create urgency
 6. **Add a countdown timer for seasonal offers**: create urgency for peak season bookings
 7. **Add a newsletter signup**: let interested users subscribe for updates on offers and availability
+
+---
+
+## Current Project Status Assessment (Round 11 — webDevReview)
+
+### Status: STABLE & CONVERSION-OPTIMIZED
+The dev server continues to run healthily on port 3000, accessible via port 81. All 18 sections render with no errors, lint passes cleanly. 44 components now live in src/components/site/. New features include a "Recently Booked" social proof widget with viewer counter (urgency/conversion) and a newsletter signup section with email validation and success state.
+
+### QA Results (via agent-browser)
+- ✅ All 18 sections render with no console/page errors (added "newsletter")
+- ✅ Lint passes cleanly
+- ✅ Newsletter signup: form present, email validation works, success state shows "You're subscribed!"
+- ✅ Social proof toast: "Aarav from Delhi · Booked · 2 nights · 4 guests · 12 minutes ago"
+- ✅ Viewer counter: "7 people viewing this property" (appears after scrolling past hero)
+- ✅ Social proof auto-dismisses after 45s, re-shows at 60s
+- ✅ Booking modal, keyboard shortcuts, reviews filter all still work
+- ✅ VLM rated newsletter section 7/10 (clean, clear, good success state)
+
+---
+
+Task ID: 12
+Agent: webDevReview (cron job 244880, round 11)
+Task: Assess current project status, perform QA via agent-browser, then independently select the most appropriate work focus — fix bugs or propose new requirements — and continue development. Mandatory: improve styling with more details and add more features/functionality.
+
+Work Log:
+- Read /home/z/my-project/worklog.md to understand prior work (Tasks 1-11 — 17-section site with full i18n, SW, parallax, keyboard shortcuts, comparison table, traveler type filter, Guest Love section).
+- Performed QA via agent-browser: verified page loads, all 17 sections render, booking modal works, keyboard shortcuts work, reviews filter works, no errors, lint clean.
+- Selected work focus: CONVERSION OPTIMIZATION (social proof + newsletter).
+
+**1. Social proof widget (social-proof.tsx + page.tsx):**
+- Created SocialProof client component with two elements:
+  - **Recently booked toast** (bottom-left, fixed): shows rotating booking notifications
+    - 8 realistic bookings with Indian names + cities: Aarav (Delhi), Isha (Mumbai), Kabir (Bengaluru), Sara (Pune), Vivaan (Jaipur), Ananya (Chandigarh), Reyansh (Lucknow), Diya (Ahmedabad)
+    - Each shows: name, city, "Booked" badge, nights, guests, relative time
+    - Rotates every 8 seconds
+    - Appears after 4s delay on page load
+    - Auto-dismisses after 45s, re-shows at 60s
+    - Dismissible with × button
+    - role="status" aria-live="polite" for accessibility
+  - **Viewer counter** (top-center, fixed): "X people viewing this property"
+    - Appears after scrolling past hero (scrollY > innerHeight * 0.8)
+    - Random viewer count (5-15) updates every 12s
+    - Animated pulse dot (emerald)
+    - Only shows when social proof toast is visible
+- Wired into page.tsx as an overlay component
+- Verified: toast shows "Aarav from Delhi · Booked", viewer counter shows "7 people viewing"
+
+**2. Newsletter signup section (newsletter-signup.tsx + page.tsx):**
+- Created NewsletterSignup client component with:
+  - Card with gradient background (from-primary/5 via-card to-accent/20)
+  - Decorative blur orbs (primary + accent)
+  - Left side: icon, badge "Stay in the loop", heading "Get notified about offers & availability", description, 3 benefit checkmarks (Monthly newsletter, Offer alerts, Local event tips)
+  - Right side: email form with:
+    - Email input with label and validation (regex for email format)
+    - Submit button with loading state ("Subscribing..." with spinning icon)
+    - Privacy note
+    - Error toast on invalid email
+    - Success toast on subscribe ("Subscribed! 🎉")
+    - Success state: green checkmark icon, "You're subscribed!" heading, "Watch your inbox for updates from Daksh Thakur" text, "Subscribe another email" button
+- Wired into page.tsx between Faq and BookingCta
+- Verified: form validates email, shows success state with "You're subscribed!" after submit
+
+**Verification (agent-browser):**
+- All 18 sections render with no console/page errors ✓
+- Newsletter: form present, email validation works, success state "You're subscribed!" ✓
+- Social proof toast: "Aarav from Delhi · Booked · 2 nights · 4 guests · 12 minutes ago" ✓
+- Viewer counter: "7 people viewing this property" after scrolling past hero ✓
+- Lint: passes cleanly ✓
+- VLM rated newsletter section 7/10 (clean, clear, good success state)
+
+Stage Summary:
+- ✅ Added 2 major features: social proof widget (toast + viewer counter), newsletter signup
+- ✅ 44 components in src/components/site/ (was 42)
+- ✅ 18 sections total (was 17, added "newsletter")
+- ✅ Social proof creates urgency with rotating booking notifications + live viewer count
+- ✅ Newsletter captures leads with email validation + success state
+- ✅ All features verified working via agent-browser
+- ✅ Lint clean, no runtime errors
+
+### Unresolved Issues / Risks
+- The social proof data (recent bookings, viewer count) is simulated — in production this would come from the booking API and real-time analytics.
+- The newsletter form simulates an API call with setTimeout — in production it would POST to an email service (Mailchimp, ConvertKit, etc.).
+- The social proof toast auto-dismisses and re-shows, which could be annoying to some users — the × dismiss button provides an escape.
+
+### Priority Recommendations for Next Phase
+1. **Translate property content**: create a Hindi version of property.ts (description, FAQs, amenities, reviews) for full localization
+2. **Migrate to next/image**: replace <img> with next/image for automatic responsive sizing, modern formats (WebP/AVIF)
+3. **Analytics integration**: add privacy-friendly analytics (Plausible/Umami) to track booking funnel + newsletter signups + social proof engagement
+4. **Add a virtual tour / 360° view**: if the host provides 360° photos, embed an interactive viewer
+5. **Add a countdown timer for seasonal offers**: create urgency for peak season bookings
+6. **Add a referral/loyalty program**: reward repeat guests with discounts
+7. **Add a live chat widget**: for instant host communication beyond WhatsApp
