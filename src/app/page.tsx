@@ -8,6 +8,7 @@ import { TheSpace } from "@/components/site/the-space";
 import { Bedrooms } from "@/components/site/bedrooms";
 import { Amenities } from "@/components/site/amenities";
 import { WeatherSection } from "@/components/site/weather-widget";
+import { GuestLove } from "@/components/site/guest-love";
 import { Reviews } from "@/components/site/reviews";
 import { Location } from "@/components/site/location";
 import { Host } from "@/components/site/host";
@@ -46,6 +47,7 @@ export default function Home() {
         <Amenities />
         <WeatherSection />
         <SectionDivider variant="curve" color="secondary" />
+        <GuestLove />
         <Reviews />
         <Location />
         <SectionDivider variant="mountains" color="background" />

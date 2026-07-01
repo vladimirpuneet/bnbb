@@ -13,16 +13,27 @@ import { property } from "@/lib/property";
 
 const PAGE_SIZE = 4;
 
+const TRAVELER_TYPES = [
+  { value: "family", label: "Family", icon: "users" },
+  { value: "couple", label: "Couple", icon: "heart" },
+  { value: "friends", label: "Friends", icon: "users" },
+  { value: "solo", label: "Solo", icon: "users" },
+  { value: "business", label: "Business", icon: "laptop" },
+] as const;
+
 export function Reviews() {
   const { reviews } = property;
   const { t } = useI18n();
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [filter, setFilter] = useState<number | null>(null); // null = all
+  const [travelerFilter, setTravelerFilter] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
-    if (filter === null) return reviews.items;
-    return reviews.items.filter((r) => r.rating === filter);
-  }, [filter, reviews.items]);
+    let items = reviews.items;
+    if (filter !== null) items = items.filter((r) => r.rating === filter);
+    if (travelerFilter !== null) items = items.filter((r) => r.travelerType === travelerFilter);
+    return items;
+  }, [filter, travelerFilter, reviews.items]);
 
   const visible = filtered.slice(0, visibleCount);
   const hasMore = visibleCount < filtered.length;
@@ -33,6 +44,11 @@ export function Reviews() {
 
   const handleFilter = (stars: number | null) => {
     setFilter(stars);
+    setVisibleCount(PAGE_SIZE);
+  };
+
+  const handleTravelerFilter = (type: string | null) => {
+    setTravelerFilter(type);
     setVisibleCount(PAGE_SIZE);
   };
 
@@ -124,6 +140,23 @@ export function Reviews() {
                   </div>
                 )}
 
+                {/* Traveler type filter */}
+                {travelerFilter !== null && (
+                  <div className="mt-3 flex items-center gap-2">
+                    <Badge variant="secondary" className="rounded-full gap-1.5">
+                      <Icon name="users" className="h-3 w-3" />
+                      {TRAVELER_TYPES.find((tt) => tt.value === travelerFilter)?.label}
+                      <button
+                        onClick={() => handleTravelerFilter(null)}
+                        className="ml-1 hover:text-foreground"
+                        aria-label="Clear traveler filter"
+                      >
+                        <Icon name="x" className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  </div>
+                )}
+
                 {/* Category ratings */}
                 <div className="mt-6 pt-6 border-t border-border/70">
                   <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
@@ -144,6 +177,42 @@ export function Reviews() {
 
           {/* Review cards */}
           <div>
+            {/* Traveler type filter chips */}
+            <div className="flex flex-wrap items-center gap-2 mb-5">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground mr-1">
+                Traveler type:
+              </span>
+              <button
+                onClick={() => handleTravelerFilter(null)}
+                className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-colors ${
+                  travelerFilter === null
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-foreground/80 hover:bg-secondary/70"
+                }`}
+              >
+                All
+              </button>
+              {TRAVELER_TYPES.map((tt) => {
+                const count = reviews.items.filter((r) => r.travelerType === tt.value).length;
+                if (count === 0) return null;
+                return (
+                  <button
+                    key={tt.value}
+                    onClick={() => handleTravelerFilter(travelerFilter === tt.value ? null : tt.value)}
+                    className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-colors ${
+                      travelerFilter === tt.value
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-foreground/80 hover:bg-secondary/70"
+                    }`}
+                  >
+                    <Icon name={tt.icon} className="h-3.5 w-3.5" />
+                    {tt.label}
+                    <span className="ml-0.5 opacity-70">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
+
             <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 content-start">
               {visible.map((r, i) => (
                 <Reveal key={r.author + r.date} delay={Math.min(i, 4) * 0.05}>
@@ -164,6 +233,11 @@ export function Reviews() {
                       <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
                         <Icon name="calendar" className="h-3.5 w-3.5" />
                         {r.date}
+                        {r.travelerType && (
+                          <Badge variant="outline" className="ml-1 rounded-full text-[10px] font-normal py-0 px-2 border-primary/30 text-primary">
+                            {TRAVELER_TYPES.find((tt) => tt.value === r.travelerType)?.label || r.travelerType}
+                          </Badge>
+                        )}
                       </div>
                       <p className="text-sm text-foreground/85 leading-relaxed whitespace-pre-line flex-1 line-clamp-[12]">
                         {r.text}
@@ -179,13 +253,13 @@ export function Reviews() {
               <div className="text-center py-16 rounded-2xl border border-dashed border-border/60">
                 <Icon name="quote" className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
                 <p className="text-sm text-muted-foreground">
-                  No {filter}-star reviews match this filter.
+                  No reviews match this filter.
                 </p>
                 <Button
                   variant="link"
                   size="sm"
                   className="mt-2"
-                  onClick={() => handleFilter(null)}
+                  onClick={() => { handleFilter(null); handleTravelerFilter(null); }}
                 >
                   Show all reviews
                 </Button>
