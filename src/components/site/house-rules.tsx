@@ -1,20 +1,24 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 
 export function HouseRules() {
   const r = property.houseRules;
+  const { t } = useI18n();
 
   return (
     <section id="rules" className="py-16 sm:py-24 bg-background scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="Things to know"
-          title="House rules & stay details"
-          description="A few gentle guidelines that keep every guest's stay peaceful and pleasant."
+          eyebrow={t("section.rules.eyebrow")}
+          title={t("section.rules.title")}
+          description={t("section.rules.desc")}
         />
 
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-3 gap-5 lg:gap-6">

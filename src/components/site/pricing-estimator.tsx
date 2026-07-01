@@ -56,14 +56,14 @@ export function PricingEstimator() {
     <section id="pricing" className="py-16 sm:py-24 bg-background scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="Transparent pricing"
+          eyebrow={t("section.pricing.eyebrow")}
           title={
             <>
-              Estimate your stay —{" "}
-              <span className="italic font-normal text-muted-foreground">no hidden fees</span>
+              {t("section.pricing.title")}{" "}
+              <span className="italic font-normal text-muted-foreground">{t("section.pricing.titleSuffix")}</span>
             </>
           }
-          description="Pick your dates and guest count for an instant, transparent quote. Final pricing is confirmed by your host on WhatsApp — and direct bookings skip platform service fees."
+          description={t("section.pricing.desc")}
         />
 
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-8 items-start">

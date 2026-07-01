@@ -1,10 +1,14 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 
 export function Overview() {
+  const { t } = useI18n();
   return (
     <section id="overview" className="py-16 sm:py-24 bg-secondary/40 scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -13,11 +17,11 @@ export function Overview() {
           <div>
             <Reveal>
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80 mb-3">
-                Welcome to your retreat
+                {t("section.overview.eyebrow")}
               </p>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-balance">
-                Where the valley holds its breath,
-                <span className="italic font-normal text-muted-foreground"> and so will you.</span>
+                {t("section.overview.title")}
+                <span className="italic font-normal text-muted-foreground"> {t("section.overview.titleSuffix")}</span>
               </h2>
             </Reveal>
 
@@ -70,7 +74,7 @@ export function Overview() {
           <div className="space-y-4">
             <Reveal delay={0.15}>
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80 mb-1">
-                Listing highlights
+                {t("section.overview.highlights")}
               </p>
             </Reveal>
             {property.highlights.map((h, i) => (

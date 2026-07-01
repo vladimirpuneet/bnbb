@@ -1,10 +1,14 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 
 export function Amenities() {
+  const { t } = useI18n();
   // Group amenities by category for nicer presentation
   const categories = Array.from(new Set(property.amenities.map((a) => a.category)));
   const grouped = categories.map((cat) => ({
@@ -16,9 +20,9 @@ export function Amenities() {
     <section id="amenities" className="py-16 sm:py-24 bg-background scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="What this place offers"
-          title="Everything you need for a comfortable stay"
-          description="From sweeping valley views to a fully equipped kitchen and lift access — 40+ amenities thoughtfully provided."
+          eyebrow={t("section.amenities.eyebrow")}
+          title={t("section.amenities.title")}
+          description={t("section.amenities.desc")}
         />
 
         <div className="mt-10 sm:mt-14 grid gap-4 lg:grid-cols-3">

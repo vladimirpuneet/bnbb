@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { openLightbox } from "./lightbox";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 import { SectionHeader } from "./section-header";
 
@@ -32,13 +33,14 @@ const blocks = [
 ];
 
 export function TheSpace() {
+  const { t } = useI18n();
   return (
     <section id="space" className="py-16 sm:py-24 bg-background scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="Inside the penthouse"
-          title="Designed to feel like home"
-          description="Three cozy rooms, a spacious hall and a fully equipped kitchen — laid out for both privacy and togetherness."
+          eyebrow={t("section.space.eyebrow")}
+          title={t("section.space.title")}
+          description={t("section.space.desc")}
         />
 
         <div className="mt-10 sm:mt-14 grid gap-5 lg:grid-cols-3">

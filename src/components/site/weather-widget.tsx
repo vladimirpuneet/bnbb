@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 
 interface DayForecast {
@@ -218,6 +219,7 @@ export function WeatherWidget() {
 }
 
 export function WeatherSection() {
+  const { t } = useI18n();
   return (
     <section id="weather" className="py-16 sm:py-24 bg-background scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -225,11 +227,11 @@ export function WeatherSection() {
           <Reveal>
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80 mb-3">
-                Plan your visit
+                {t("section.weather.eyebrow")}
               </p>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-balance">
-                Pleasant weather,
-                <span className="italic font-normal text-muted-foreground"> year-round.</span>
+                {t("section.weather.title")}
+                <span className="italic font-normal text-muted-foreground"> {t("section.weather.titleSuffix")}</span>
               </h2>
               <p className="mt-4 text-muted-foreground text-base sm:text-lg leading-relaxed text-pretty max-w-xl">
                 Dehradun sits in the Doon valley at 640m elevation, enjoying a temperate climate.

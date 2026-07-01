@@ -8,18 +8,20 @@ import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
 import { StarRating } from "./star-rating";
 import { useBooking } from "./use-booking";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 
 export function Host() {
   const openBooking = useBooking((s) => s.open);
+  const { t } = useI18n();
 
   return (
     <section id="host" className="py-16 sm:py-24 bg-background scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="Meet your host"
-          title="Daksh Thakur — your Superhost"
-          description="Experienced, responsive and committed to making your stay memorable. Response rate 99% · replies within an hour."
+          eyebrow={t("section.host.eyebrow")}
+          title={t("section.host.title")}
+          description={t("section.host.desc")}
         />
 
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-[1fr_1.3fr] gap-6 lg:gap-10 items-start">

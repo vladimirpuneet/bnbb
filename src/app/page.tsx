@@ -21,6 +21,7 @@ import { FloatingActions } from "@/components/site/floating-actions";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 import { SectionToc } from "@/components/site/section-toc";
 import { SkipLink } from "@/components/site/skip-link";
+import { SectionDivider } from "@/components/site/section-divider";
 
 export default function Home() {
   return (
@@ -32,14 +33,19 @@ export default function Home() {
       <main id="main-content" className="flex-1">
         <Hero />
         <Gallery />
+        <SectionDivider variant="wave" color="secondary" />
         <Overview />
         <PricingEstimator />
+        <SectionDivider variant="mountains" color="background" />
         <TheSpace />
         <Bedrooms />
+        <SectionDivider variant="wave" color="secondary" />
         <Amenities />
         <WeatherSection />
+        <SectionDivider variant="curve" color="secondary" />
         <Reviews />
         <Location />
+        <SectionDivider variant="mountains" color="background" />
         <Host />
         <HouseRules />
         <Faq />

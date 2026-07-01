@@ -3,17 +3,19 @@
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { openLightbox } from "./lightbox";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 import { SectionHeader } from "./section-header";
 
 export function Bedrooms() {
+  const { t } = useI18n();
   return (
     <section id="bedrooms" className="py-16 sm:py-24 bg-secondary/40 scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="Where you'll sleep"
-          title="Three cozy rooms, each with a king bed"
-          description="Two rooms feature attached washrooms; the third shares a common washroom connected to the hall. All rooms open directly into the spacious hall."
+          eyebrow={t("section.bedrooms.eyebrow")}
+          title={t("section.bedrooms.title")}
+          description={t("section.bedrooms.desc")}
         />
 
         <div className="mt-10 sm:mt-14 grid gap-5 sm:gap-6 md:grid-cols-3">

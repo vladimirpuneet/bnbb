@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 
 const nearby = [
@@ -70,13 +71,14 @@ const attractions = [
 ];
 
 export function Location() {
+  const { t } = useI18n();
   return (
     <section id="location" className="py-16 sm:py-24 bg-secondary/40 scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="Where you'll be"
-          title="Tehri Garhwal, Dehradun"
-          description="Perched above the Doon valley with easy access to Mussoorie and Dehradun's most-loved natural escapes."
+          eyebrow={t("section.location.eyebrow")}
+          title={t("section.location.title")}
+          description={t("section.location.desc")}
         />
 
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-10 items-start">

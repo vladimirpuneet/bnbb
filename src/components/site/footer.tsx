@@ -66,20 +66,19 @@ export function Footer() {
                 { href: "#overview", label: "section.overview.eyebrow" },
                 { href: "#pricing", label: "nav.pricing" },
                 { href: "#amenities", label: "nav.amenities" },
-                { href: "#weather", label: "Weather" },
+                { href: "#weather", label: "section.weather.eyebrow" },
                 { href: "#reviews", label: "nav.reviews" },
                 { href: "#location", label: "nav.location" },
-                { href: "#host", label: "Host" },
+                { href: "#host", label: "section.host.eyebrow" },
                 { href: "#faq", label: "nav.faq" },
-                { href: "#rules", label: "House rules" },
-              ] as { href: string; label: TranslationKey | string }[]).map((l) => (
+                { href: "#rules", label: "section.rules.title" },
+              ] as { href: string; label: TranslationKey }[]).map((l) => (
                 <li key={l.href}>
                   <a
                     href={l.href}
                     className="text-background/75 hover:text-background hover:underline underline-offset-4 transition-colors"
                   >
-                    {/* If the label is a translation key, translate it; otherwise render as-is */}
-                    {(t(l.label as TranslationKey)) === l.label ? l.label : t(l.label as TranslationKey)}
+                    {t(l.label)}
                   </a>
                 </li>
               ))}

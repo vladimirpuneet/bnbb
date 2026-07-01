@@ -63,6 +63,9 @@ export const translations = {
     "section.pricing.perNight": "per night",
 
     "section.reviews.eyebrow": "Guest experiences",
+    "section.reviews.title": "Loved by guests —",
+    "section.reviews.desc": "Real feedback from travellers who've stayed at The Valley Gaze Penthouse.",
+    "section.reviews.outOf5": "out of 5",
     "section.reviews.showMore": "Show more reviews",
     "section.reviews.showFewer": "Show fewer reviews",
     "section.reviews.showing": "Showing",
@@ -77,6 +80,52 @@ export const translations = {
     "section.book.desc":
       "Skip the platform fees. Reserve directly with the host via WhatsApp — instant responses, best rates, and a personal touch.",
     "section.book.chat": "Chat on WhatsApp",
+
+    // Additional section headers
+    "section.overview.eyebrow": "Welcome to your retreat",
+    "section.overview.title": "Where the valley holds its breath,",
+    "section.overview.titleSuffix": "and so will you.",
+    "section.overview.highlights": "Listing highlights",
+
+    "section.space.eyebrow": "Inside the penthouse",
+    "section.space.title": "Designed to feel like home",
+    "section.space.desc":
+      "Three cozy rooms, a spacious hall and a fully equipped kitchen — laid out for both privacy and togetherness.",
+
+    "section.bedrooms.eyebrow": "Where you'll sleep",
+    "section.bedrooms.title": "Three cozy rooms, each with a king bed",
+    "section.bedrooms.desc":
+      "Two rooms feature attached washrooms; the third shares a common washroom connected to the hall. All rooms open directly into the spacious hall.",
+
+    "section.amenities.eyebrow": "What this place offers",
+    "section.amenities.title": "Everything you need for a comfortable stay",
+    "section.amenities.desc":
+      "From sweeping valley views to a fully equipped kitchen and lift access — 40+ amenities thoughtfully provided.",
+
+    "section.weather.eyebrow": "Plan your visit",
+    "section.weather.title": "Pleasant weather,",
+    "section.weather.titleSuffix": "year-round.",
+
+    "section.host.eyebrow": "Meet your host",
+    "section.host.title": "Daksh Thakur — your Superhost",
+    "section.host.desc":
+      "Experienced, responsive and committed to making your stay memorable. Response rate 99% · replies within an hour.",
+
+    "section.rules.eyebrow": "Things to know",
+    "section.rules.title": "House rules & stay details",
+    "section.rules.desc":
+      "A few gentle guidelines that keep every guest's stay peaceful and pleasant.",
+
+    "section.location.eyebrow": "Where you'll be",
+    "section.location.title": "Tehri Garhwal, Dehradun",
+    "section.location.desc":
+      "Perched above the Doon valley with easy access to Mussoorie and Dehradun's most-loved natural escapes.",
+
+    "section.pricing.eyebrow": "Transparent pricing",
+    "section.pricing.title": "Estimate your stay —",
+    "section.pricing.titleSuffix": "no hidden fees",
+    "section.pricing.desc":
+      "Pick your dates and guest count for an instant, transparent quote. Final pricing is confirmed by your host on WhatsApp — and direct bookings skip platform service fees.",
 
     // Booking modal
     "booking.title": "Book your stay",
@@ -150,6 +199,9 @@ export const translations = {
     "section.pricing.perNight": "प्रति रात",
 
     "section.reviews.eyebrow": "मेहमान अनुभव",
+    "section.reviews.title": "मेहमानों द्वारा पसंद किया गया —",
+    "section.reviews.desc": "द वैली गेज़ पेंटहाउस में ठहरे यात्रियों की वास्तविक प्रतिक्रिया।",
+    "section.reviews.outOf5": "5 में से",
     "section.reviews.showMore": "और समीक्षाएँ देखें",
     "section.reviews.showFewer": "कम समीक्षाएँ देखें",
     "section.reviews.showing": "दिखा रहे हैं",
@@ -164,6 +216,49 @@ export const translations = {
     "section.book.desc":
       "प्लेटफ़ॉर्म शुल्क छोड़ें। होस्ट के साथ सीधे WhatsApp पर बुक करें — तत्काल प्रतिक्रिया, सर्वोत्तम दरें, और व्यक्तिगत स्पर्श।",
     "section.book.chat": "WhatsApp पर चैट करें",
+
+    // Additional section headers (Hindi)
+    "section.overview.title": "जहाँ घाटी साँस रोकती है,",
+    "section.overview.titleSuffix": "और आप भी।",
+
+    "section.space.eyebrow": "पेंटहाउस के अंदर",
+    "section.space.title": "घर जैसी अनुभूति के लिए डिज़ाइन किया गया",
+    "section.space.desc":
+      "तीन सुरक्षित कमरे, एक विशाल हॉल और पूरी तरह से सुसज्जित रसोई — निजता और एकसाथिता दोनों के लिए।",
+
+    "section.bedrooms.eyebrow": "आप कहाँ सोएँगे",
+    "section.bedrooms.title": "तीन सुरक्षित कमरे, प्रत्येक में किंग बिस्तर",
+    "section.bedrooms.desc":
+      "दो कमरों में संलग्न बाथरूम हैं; तीसरा कमरा हॉल से जुड़े सामान्य बाथरूम का उपयोग करता है। सभी कमरे सीधे विशाल हॉल में खुलते हैं।",
+
+    "section.amenities.eyebrow": "यह स्थान क्या प्रदान करता है",
+    "section.amenities.title": "आरामदायक ठहराव के लिए सब कुछ",
+    "section.amenities.desc":
+      "व्यापक घाटी दृश्यों से लेकर पूरी तरह सुसज्जित रसोई और लिफ्ट तक — 40+ सुविधाएँ देखभाल के साथ प्रदान की गईं।",
+
+    "section.weather.eyebrow": "अपनी यात्रा की योजना बनाएँ",
+    "section.weather.title": "सुहावना मौसम,",
+    "section.weather.titleSuffix": "साल भर।",
+
+    "section.host.eyebrow": "अपने होस्ट से मिलें",
+    "section.host.title": "दक्ष ठाकुर — आपके सुपरहोस्ट",
+    "section.host.desc":
+      "अनुभवी, उत्तरदायी और आपके ठहराव को यादगार बनाने के लिए प्रतिबद्ध। प्रतिक्रिया दर 99% · एक घंटे के भीतर जवाब।",
+
+    "section.rules.eyebrow": "जानना आवश्यक",
+    "section.rules.title": "घर के नियम और ठहराव विवरण",
+    "section.rules.desc":
+      "कुछ सौम्य दिशानिर्देश जो हर मेहमान के ठहराव को शांतिपूर्ण और सुखद बनाते हैं।",
+
+    "section.location.eyebrow": "आप कहाँ होंगे",
+    "section.location.title": "टेहरी गढ़वाल, देहरादून",
+    "section.location.desc":
+      "दून घाटी के ऊपर स्थित, मसूरी और देहरादून के सबसे प्रिय प्राकृतिक स्थलों तक आसान पहुँच।",
+
+    "section.pricing.title": "अपना ठहराव अनुमानित करें —",
+    "section.pricing.titleSuffix": "कोई छिपा शुल्क नहीं",
+    "section.pricing.desc":
+      "तत्काल, पारदर्शी उद्धरण के लिए अपनी तिथियाँ और मेहमान संख्या चुनें। अंतिम मूल्य आपके होस्ट द्वारा WhatsApp पर कन्फर्म किया जाता है — और प्रत्यक्ष बुकिंग पर प्लेटफ़ॉर्म सेवा शुल्क माफ़।",
 
     // Booking modal
     "booking.title": "अपना बुकिंग करें",

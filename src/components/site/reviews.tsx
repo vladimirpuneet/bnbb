@@ -48,16 +48,16 @@ export function Reviews() {
     <section id="reviews" className="py-16 sm:py-24 bg-secondary/40 scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="Guest experiences"
+          eyebrow={t("section.reviews.eyebrow")}
           title={
             <>
-              Loved by guests —{" "}
+              {t("section.reviews.title")}{" "}
               <span className="italic font-normal text-muted-foreground">
-                {reviews.total} reviews
+                {reviews.total} {t("hero.reviews")}
               </span>
             </>
           }
-          description="Real feedback from travellers who've stayed at The Valley Gaze Penthouse."
+          description={t("section.reviews.desc")}
         />
 
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-[0.85fr_1.5fr] gap-6 lg:gap-10">
@@ -72,7 +72,7 @@ export function Reviews() {
                   <div className="pb-1">
                     <StarRating rating={reviews.overall} size="md" showValue={false} />
                     <p className="text-xs text-muted-foreground mt-1">
-                      out of 5 · {reviews.total} reviews
+                      {t("section.reviews.outOf5")} · {reviews.total} {t("hero.reviews")}
                     </p>
                   </div>
                 </div>

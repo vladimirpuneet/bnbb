@@ -726,3 +726,111 @@ Stage Summary:
 5. **Performance audit**: run Lighthouse, optimize LCP/CLS, add preload hints for hero image
 6. **Analytics integration**: add privacy-friendly analytics (Plausible/Umami) to track booking funnel conversion
 7. **A/B test booking CTA**: try different button colors/positions to optimize conversion
+
+---
+
+## Current Project Status Assessment (Round 7 — webDevReview)
+
+### Status: STABLE & FULLY LOCALIZED + VISUAL POLISH
+The dev server continues to run healthily on port 3000, accessible via port 81. All 14 sections render with no errors, lint passes cleanly. 38 components live in src/components/site/. The i18n is now fully wired — ALL 12 section headers translate to Hindi, all section descriptions translate, the footer explore links are fully translated, and 5 SectionDivider components add visual transitions between sections. The translation dictionary now has 197 key-value pairs (98 EN + 98 HI + type exports).
+
+### QA Results (via agent-browser)
+- ✅ All 14 sections render with no console/page errors
+- ✅ Lint passes cleanly
+- ✅ 5 SectionDivider SVGs present between sections
+- ✅ Language toggle: switching to Hindi translates ALL 12 section headers:
+  - overview → "जहाँ घाटी साँस रोकती है, और आप भी।"
+  - pricing → "अपना ठहराव अनुमानित करें — कोई छिपा शुल्क नहीं"
+  - space → "घर जैसी अनुभूति के लिए डिज़ाइन किया गया"
+  - bedrooms → "तीन सुरक्षित कमरे, प्रत्येक में किंग बिस्तर"
+  - amenities → "आरामदायक ठहराव के लिए सब कुछ"
+  - weather → "सुहावना मौसम, साल भर।"
+  - reviews → "मेहमानों द्वारा पसंद किया गया — 27 समीक्षाएँ"
+  - location → "टेहरी गढ़वाल, देहरादून"
+  - host → "दक्ष ठाकुर — आपके सुपरहोस्ट"
+  - rules → "घर के नियम और ठहराव विवरण"
+  - faq → "अक्सर पूछे जाने वाले प्रश्न"
+  - book → "आज ही अपनी घाटी यात्रा बुक करें"
+- ✅ Reviews summary card: "5 में से · 27 समीक्षाएँ"
+- ✅ Footer explore links all translate (including Weather, Host, House rules)
+- ✅ VLM rated page 7/10 (clean, minimalist, good color palette)
+
+---
+
+Task ID: 8
+Agent: webDevReview (cron job 244880, round 7)
+Task: Assess current project status, perform QA via agent-browser, then independently select the most appropriate work focus — fix bugs or propose new requirements — and continue development. Mandatory: improve styling with more details and add more features/functionality.
+
+Work Log:
+- Read /home/z/my-project/worklog.md to understand prior work (Tasks 1-7 — 14-section site with full i18n wiring, SW, image dimensions, section dividers).
+- Performed QA via agent-browser: verified page loads, all 14 sections render, booking modal works, no errors, lint clean.
+- **Key finding**: Many section headers (overview, space, bedrooms, amenities, weather, host, rules, location, pricing) were NOT translated in Hindi — they used hardcoded English strings in the SectionHeader components. The footer explore links also had 3 English labels ("Weather", "Host", "House rules").
+
+**1. Added missing translation keys (src/lib/i18n.ts):**
+Added 30+ new translation keys for both EN and HI:
+- section.overview.title, section.overview.titleSuffix, section.overview.highlights
+- section.space.eyebrow, section.space.title, section.space.desc
+- section.bedrooms.eyebrow, section.bedrooms.title, section.bedrooms.desc
+- section.amenities.eyebrow, section.amenities.title, section.amenities.desc
+- section.weather.eyebrow, section.weather.title, section.weather.titleSuffix
+- section.host.eyebrow, section.host.title, section.host.desc
+- section.rules.eyebrow, section.rules.title, section.rules.desc
+- section.location.eyebrow, section.location.title, section.location.desc
+- section.pricing.title, section.pricing.titleSuffix, section.pricing.desc
+- section.reviews.title, section.reviews.desc, section.reviews.outOf5
+All keys have complete Hindi translations (e.g., "जहाँ घाटी साँस रोकती है,", "घर जैसी अनुभूति के लिए डिज़ाइन किया गया", "तीन सुरक्षित कमरे, प्रत्येक में किंग बिस्तर", etc.)
+Total translation dictionary: 197 key-value pairs (98 EN + 98 HI).
+
+**2. Wired i18n to all remaining section components:**
+- **overview.tsx**: Converted to client component, wired eyebrow/title/titleSuffix/highlights to t() calls
+- **the-space.tsx**: Wired SectionHeader eyebrow/title/description to t() calls
+- **bedrooms.tsx**: Wired SectionHeader eyebrow/title/description to t() calls
+- **amenities.tsx**: Converted to client component, wired SectionHeader to t() calls (fixed duplicate description line)
+- **weather-widget.tsx**: Added useI18n import, wired WeatherSection eyebrow/title/titleSuffix to t() calls
+- **host.tsx**: Wired SectionHeader eyebrow/title/description to t() calls
+- **house-rules.tsx**: Converted to client component, wired SectionHeader to t() calls
+- **location.tsx**: Added useI18n import, wired SectionHeader eyebrow/title/description to t() calls
+- **pricing-estimator.tsx**: Wired SectionHeader eyebrow/title/titleSuffix/description to t() calls
+- **reviews.tsx**: Wired SectionHeader eyebrow/title/description to t() calls, wired "out of 5 · X reviews" summary to t() calls
+- **footer.tsx**: Replaced plain English labels ("Weather", "Host", "House rules") with translation keys (section.weather.eyebrow, section.host.eyebrow, section.rules.title)
+
+**3. Added SectionDivider between sections (page.tsx):**
+Added 5 SectionDivider components at section boundaries for visual transitions:
+- Between Gallery and Overview (wave, secondary color)
+- Between Pricing and TheSpace (mountains, background color)
+- Between Bedrooms and Amenities (wave, secondary color)
+- Between Weather and Reviews (curve, secondary color)
+- Between Location and Host (mountains, background color)
+Each divider is a decorative SVG (1200×40 viewBox) with 3 variants (wave/mountains/curve) and 3 color options. They use currentColor + fill for theme integration and are pointer-events-none + aria-hidden.
+
+**Verification (agent-browser):**
+- All 14 sections render with no console/page errors ✓
+- 5 SectionDivider SVGs present ✓
+- ALL 12 section headers translate to Hindi ✓
+- Reviews summary card: "5 में से · 27 समीक्षाएँ" (Hindi) ✓
+- Footer explore links all translate ✓
+- Lint: passes cleanly ✓
+- VLM rated page 7/10 (clean, minimalist, good color palette)
+
+Stage Summary:
+- ✅ Added 30+ translation keys (EN + HI) for all section headers/descriptions
+- ✅ Wired i18n to 10 remaining components (overview, space, bedrooms, amenities, weather, host, rules, location, pricing, reviews)
+- ✅ Fixed footer explore links (Weather, Host, House rules now translate)
+- ✅ Added 5 SectionDivider components between sections for visual polish
+- ✅ 197 total translation key-value pairs (98 EN + 98 HI)
+- ✅ All features verified working via agent-browser
+- ✅ Lint clean, no runtime errors
+
+### Unresolved Issues / Risks
+- The i18n now translates ALL UI strings and section headers, but property content (description paragraphs, review text, FAQ answers, amenity names) remains in English. Full content translation would require a Hindi version of property.ts.
+- The SectionDivider variants use SVG paths that are decorative — they don't perfectly match the section background colors at every breakpoint, but the currentColor approach adapts well.
+- The weather widget's body paragraph ("Dehradun sits in the Doon valley at 640m elevation...") and seasonal cards are still in English.
+
+### Priority Recommendations for Next Phase
+1. **Translate property content**: create a Hindi version of property.ts (description, FAQs, amenities, reviews summary) for full localization
+2. **Translate weather widget body**: add Hindi for the climate description paragraph and seasonal cards
+3. **Migrate to next/image**: replace <img> with next/image for automatic responsive sizing, modern formats (WebP/AVIF)
+4. **Performance audit**: run Lighthouse, optimize LCP/CLS, add preload hints for hero image
+5. **Analytics integration**: add privacy-friendly analytics (Plausible/Umami) to track booking funnel conversion
+6. **A/B test booking CTA**: try different button colors/positions to optimize conversion
+7. **Add a "Back to top" floating button**: enhance navigation for the long single-page layout
