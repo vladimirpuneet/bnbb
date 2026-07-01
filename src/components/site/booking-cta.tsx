@@ -5,10 +5,12 @@ import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { StarRating } from "./star-rating";
 import { useBooking } from "./use-booking";
+import { useI18n } from "./use-i18n";
 import { property, buildWhatsappLink, defaultBookingMessage } from "@/lib/property";
 
 export function BookingCta() {
   const openBooking = useBooking((s) => s.open);
+  const { t } = useI18n();
 
   const quickBook = () => {
     window.open(buildWhatsappLink(defaultBookingMessage()), "_blank", "noopener,noreferrer");
@@ -34,11 +36,10 @@ export function BookingCta() {
               Ready when you are
             </p>
             <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold text-primary-foreground tracking-tight text-balance">
-              Book your valley escape today
+              {t("section.book.title")}
             </h2>
             <p className="mt-4 sm:mt-5 max-w-2xl mx-auto text-primary-foreground/85 text-base sm:text-lg leading-relaxed text-pretty">
-              Skip the platform fees. Reserve directly with {property.host.name} via WhatsApp —
-              instant responses, best rates, and a personal touch.
+              {t("section.book.desc")}
             </p>
 
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
@@ -48,7 +49,7 @@ export function BookingCta() {
                 className="h-13 sm:h-14 px-7 sm:px-9 rounded-full bg-white text-primary hover:bg-white/90 font-semibold text-base shadow-2xl shadow-black/20 group"
               >
                 <Icon name="calendar" className="h-5 w-5 mr-2" strokeWidth={2} />
-                Book Now
+                {t("nav.bookNow")}
                 <Icon name="arrowRight" className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
               </Button>
               <Button
@@ -58,7 +59,7 @@ export function BookingCta() {
                 className="h-13 sm:h-14 px-6 sm:px-8 rounded-full bg-transparent border-white/40 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground hover:border-white/60 font-medium"
               >
                 <Icon name="message" className="h-5 w-5 mr-2 text-[#25D366]" strokeWidth={2} />
-                Chat on WhatsApp
+                {t("section.book.chat")}
               </Button>
             </div>
 
@@ -67,7 +68,7 @@ export function BookingCta() {
               <span className="inline-flex items-center gap-1.5">
                 <StarRating rating={property.hero.rating} size="sm" showValue={false} />
                 <span className="font-semibold">{property.hero.rating}</span>
-                <span className="opacity-75">({property.hero.reviewCount} reviews)</span>
+                <span className="opacity-75">({property.hero.reviewCount} {t("hero.reviews")})</span>
               </span>
               <span className="opacity-30 hidden sm:inline">·</span>
               <span className="inline-flex items-center gap-1.5">
@@ -77,7 +78,7 @@ export function BookingCta() {
               <span className="opacity-30 hidden sm:inline">·</span>
               <span className="inline-flex items-center gap-1.5">
                 <Icon name="clock" className="h-4 w-4" />
-                Responds within an hour
+                {t("booking.responds")}
               </span>
               <span className="opacity-30 hidden sm:inline">·</span>
               <span className="inline-flex items-center gap-1.5">

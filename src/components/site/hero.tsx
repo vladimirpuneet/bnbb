@@ -6,11 +6,13 @@ import { Icon } from "./icon";
 import { StarRating } from "./star-rating";
 import { Reveal } from "./reveal";
 import { useBooking } from "./use-booking";
+import { useI18n } from "./use-i18n";
 import { openLightbox } from "./lightbox";
 import { property } from "@/lib/property";
 
 export function Hero() {
   const openBooking = useBooking((s) => s.open);
+  const { t } = useI18n();
 
   return (
     <section id="top" className="relative -mt-16 sm:-mt-18 h-[100svh] min-h-[640px] w-full overflow-hidden">
@@ -43,7 +45,7 @@ export function Hero() {
 
         <Reveal delay={0.15}>
           <p className="text-white/95 text-sm sm:text-base font-medium tracking-[0.2em] uppercase mb-2 sm:mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
-            Entire Penthouse · {property.locationDetail}
+            {t("hero.entirePenthouse")} · {property.locationDetail}
           </p>
         </Reveal>
 
@@ -65,19 +67,19 @@ export function Hero() {
         <Reveal delay={0.45}>
           <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-white/85 text-sm">
             <span className="inline-flex items-center gap-1.5">
-              <Icon name="users" className="h-4 w-4" /> {property.stats[0].value} guests
+              <Icon name="users" className="h-4 w-4" /> {property.stats[0].value} {t("hero.guests")}
             </span>
             <span className="opacity-40">·</span>
             <span className="inline-flex items-center gap-1.5">
-              <Icon name="door" className="h-4 w-4" /> {property.stats[1].value} bedrooms
+              <Icon name="door" className="h-4 w-4" /> {property.stats[1].value} {t("hero.bedrooms")}
             </span>
             <span className="opacity-40">·</span>
             <span className="inline-flex items-center gap-1.5">
-              <Icon name="bed" className="h-4 w-4" /> {property.stats[2].value} beds
+              <Icon name="bed" className="h-4 w-4" /> {property.stats[2].value} {t("hero.beds")}
             </span>
             <span className="opacity-40">·</span>
             <span className="inline-flex items-center gap-1.5">
-              <Icon name="bath" className="h-4 w-4" /> {property.stats[3].value} baths
+              <Icon name="bath" className="h-4 w-4" /> {property.stats[3].value} {t("hero.baths")}
             </span>
           </div>
         </Reveal>
@@ -91,7 +93,7 @@ export function Hero() {
               className="h-13 sm:h-14 px-6 sm:px-8 rounded-full bg-white text-primary hover:bg-white/90 font-semibold text-base shadow-2xl shadow-black/30 group"
             >
               <Icon name="calendar" className="h-5 w-5 mr-2" strokeWidth={2} />
-              Book your stay
+              {t("hero.bookStay")}
               <Icon name="arrowRight" className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
             </Button>
 
@@ -102,16 +104,16 @@ export function Hero() {
               <span className="grid place-items-center h-9 w-9 rounded-full bg-white/20 backdrop-blur-md group-hover:bg-white/30 transition-colors">
                 <Icon name="camera" className="h-4 w-4" />
               </span>
-              View all {property.allImages.length} photos
+              {t("hero.viewPhotos")} {property.allImages.length} {t("hero.photos")}
             </button>
 
             <div className="hidden sm:flex sm:ml-auto items-center gap-3">
               {/* Starting price hint */}
               <div className="flex flex-col items-end px-3 py-1.5">
-                <span className="text-[10px] uppercase tracking-wider text-white/70">From</span>
+                <span className="text-[10px] uppercase tracking-wider text-white/70">{t("hero.from")}</span>
                 <span className="font-display text-lg font-semibold text-white tabular-nums drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                   ₹{property.pricing.weekdayNightly.toLocaleString("en-IN")}
-                  <span className="text-xs font-normal text-white/70"> / night</span>
+                  <span className="text-xs font-normal text-white/70"> {t("hero.perNight")}</span>
                 </span>
               </div>
               <div className="h-8 w-px bg-white/20" />
@@ -129,7 +131,7 @@ export function Hero() {
 
       {/* Scroll cue */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-1 text-white/70">
-        <span className="text-[10px] uppercase tracking-[0.2em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">Scroll</span>
+        <span className="text-[10px] uppercase tracking-[0.2em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">{t("hero.scroll")}</span>
         <Icon name="chevronDown" className="h-4 w-4 animate-bounce" />
       </div>
     </section>

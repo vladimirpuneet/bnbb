@@ -11,17 +11,19 @@ import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
 import { useBooking } from "./use-booking";
+import { useI18n } from "./use-i18n";
 import { property, buildWhatsappLink, defaultBookingMessage } from "@/lib/property";
 
 export function Faq() {
   const openBooking = useBooking((s) => s.open);
+  const { t } = useI18n();
 
   return (
     <section id="faq" className="py-16 sm:py-24 bg-secondary/40 scroll-mt-16">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          eyebrow="Good to know"
-          title="Frequently asked questions"
+          eyebrow={t("section.faq.eyebrow")}
+          title={t("section.faq.title")}
           description="Everything you need to know before booking. Can't find an answer? Tap any Book Now button to chat directly with the host."
           align="center"
         />
@@ -70,7 +72,7 @@ export function Faq() {
                 className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium transition-colors flex-1 sm:flex-initial"
               >
                 <Icon name="calendar" className="h-4 w-4" strokeWidth={2} />
-                Book Now
+                {t("nav.bookNow")}
               </button>
               <a
                 href={buildWhatsappLink(defaultBookingMessage())}

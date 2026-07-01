@@ -2,6 +2,7 @@
 
 import { useState, useCallback, type ImgHTMLAttributes } from "react";
 import { blurPlaceholders } from "@/lib/blur-placeholders";
+import { imageDimensions } from "@/lib/image-dimensions";
 import { cn } from "@/lib/utils";
 
 interface BlurImageProps extends ImgHTMLAttributes<HTMLImageElement> {
@@ -18,6 +19,9 @@ interface BlurImageProps extends ImgHTMLAttributes<HTMLImageElement> {
  * Image with a base64 blur-up placeholder shown while the full image loads.
  * The placeholder is a 20×20 JPEG stretched to fill the container, with a
  * blur filter — it fades out once the real image has loaded.
+ *
+ * Also sets width/height attributes from image-dimensions.ts to prevent
+ * Cumulative Layout Shift (CLS).
  *
  * Usage:
  *   <BlurImage src="/images/img-01.jpeg" alt="Living room" blurKey="img-01" />
@@ -41,6 +45,7 @@ export function BlurImage({
       ?.replace(/\.(jpeg|jpg|png|webp)$/i, "") ??
     "";
   const placeholder = blurPlaceholders[key];
+  const dims = imageDimensions[key];
 
   const handleLoad = useCallback(() => setLoaded(true), []);
 
@@ -65,6 +70,8 @@ export function BlurImage({
         alt={alt}
         loading="lazy"
         onLoad={handleLoad}
+        width={dims?.width}
+        height={dims?.height}
         className={cn(
           "relative transition-opacity duration-700 ease-out",
           loaded ? "opacity-100" : "opacity-0",
@@ -75,3 +82,4 @@ export function BlurImage({
     </span>
   );
 }
+

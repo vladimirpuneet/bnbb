@@ -8,12 +8,14 @@ import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { StarRating } from "./star-rating";
 import { SectionHeader } from "./section-header";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 
 const PAGE_SIZE = 4;
 
 export function Reviews() {
   const { reviews } = property;
+  const { t } = useI18n();
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [filter, setFilter] = useState<number | null>(null); // null = all
 
@@ -198,14 +200,14 @@ export function Reviews() {
                   onClick={handleShowMore}
                   className="rounded-full gap-2 group"
                 >
-                  Show more reviews
+                  {t("section.reviews.showMore")}
                   <Icon
                     name="chevronDown"
                     className="h-4 w-4 transition-transform group-hover:translate-y-0.5"
                   />
                 </Button>
                 <span className="text-xs text-muted-foreground">
-                  Showing {visible.length} of {filtered.length}{" "}
+                  {t("section.reviews.showing")} {visible.length} {t("section.reviews.of")} {filtered.length}{" "}
                   {filter !== null ? `(${filter}★)` : ""}
                 </span>
               </div>
@@ -222,7 +224,7 @@ export function Reviews() {
                   }}
                   className="text-muted-foreground"
                 >
-                  Show fewer reviews
+                  {t("section.reviews.showFewer")}
                   <Icon name="chevronDown" className="h-4 w-4 ml-1 rotate-180" />
                 </Button>
               </div>
@@ -239,7 +241,7 @@ export function Reviews() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium"
             >
-              Read all {reviews.total} reviews on Airbnb
+              {t("section.reviews.readAll")} {reviews.total} {t("section.reviews.reviewsOnAirbnb")}
               <Icon name="arrowUpRight" className="h-3.5 w-3.5" />
             </a>
           </div>

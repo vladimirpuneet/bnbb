@@ -1,7 +1,13 @@
+"use client";
+
 import { Icon } from "./icon";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
+import type { TranslationKey } from "@/lib/i18n";
 
 export function Footer() {
+  const { t } = useI18n();
+
   return (
     <footer className="bg-foreground text-background">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -44,7 +50,7 @@ export function Footer() {
                 className="inline-flex items-center gap-2 rounded-full bg-background/10 hover:bg-background/15 border border-background/20 px-4 py-2 text-sm font-medium transition-colors"
               >
                 <Icon name="arrowUpRight" className="h-4 w-4" />
-                View on Airbnb
+                {t("nav.airbnb")}
               </a>
             </div>
           </div>
@@ -52,27 +58,28 @@ export function Footer() {
           {/* Explore links */}
           <div>
             <h4 className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-background/80 mb-4">
-              Explore
+              {t("footer.explore")}
             </h4>
             <ul className="space-y-2.5 text-sm">
-              {[
-                { href: "#gallery", label: "Photo gallery" },
-                { href: "#overview", label: "Overview" },
-                { href: "#pricing", label: "Pricing estimator" },
-                { href: "#amenities", label: "Amenities" },
+              {([
+                { href: "#gallery", label: "nav.photos" },
+                { href: "#overview", label: "section.overview.eyebrow" },
+                { href: "#pricing", label: "nav.pricing" },
+                { href: "#amenities", label: "nav.amenities" },
                 { href: "#weather", label: "Weather" },
-                { href: "#reviews", label: "Reviews" },
-                { href: "#location", label: "Location" },
-                { href: "#host", label: "Meet the host" },
-                { href: "#faq", label: "FAQ" },
+                { href: "#reviews", label: "nav.reviews" },
+                { href: "#location", label: "nav.location" },
+                { href: "#host", label: "Host" },
+                { href: "#faq", label: "nav.faq" },
                 { href: "#rules", label: "House rules" },
-              ].map((l) => (
+              ] as { href: string; label: TranslationKey | string }[]).map((l) => (
                 <li key={l.href}>
                   <a
                     href={l.href}
                     className="text-background/75 hover:text-background hover:underline underline-offset-4 transition-colors"
                   >
-                    {l.label}
+                    {/* If the label is a translation key, translate it; otherwise render as-is */}
+                    {(t(l.label as TranslationKey)) === l.label ? l.label : t(l.label as TranslationKey)}
                   </a>
                 </li>
               ))}
@@ -82,20 +89,20 @@ export function Footer() {
           {/* Property details */}
           <div>
             <h4 className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-background/80 mb-4">
-              Property details
+              {t("footer.details")}
             </h4>
             <ul className="space-y-2.5 text-sm text-background/75">
               <li className="flex items-center gap-2">
                 <Icon name="users" className="h-4 w-4 text-background/50 shrink-0" />
-                Up to {property.houseRules.maxGuests} guests
+                Up to {property.houseRules.maxGuests} {t("hero.guests")}
               </li>
               <li className="flex items-center gap-2">
                 <Icon name="door" className="h-4 w-4 text-background/50 shrink-0" />
-                3 bedrooms · 2.5 bathrooms
+                3 {t("hero.bedrooms")} · 2.5 {t("hero.baths")}
               </li>
               <li className="flex items-center gap-2">
                 <Icon name="clock" className="h-4 w-4 text-background/50 shrink-0" />
-                Check-in {property.houseRules.checkIn} · out {property.houseRules.checkOut}
+                {t("booking.checkin")} {property.houseRules.checkIn} · {t("booking.checkout")} {property.houseRules.checkOut}
               </li>
               <li className="flex items-center gap-2">
                 <Icon name="key" className="h-4 w-4 text-background/50 shrink-0" />
@@ -107,7 +114,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Icon name="star" className="h-4 w-4 text-background/50 shrink-0 fill-current" />
-                {property.hero.rating} · {property.hero.reviewCount} reviews
+                {property.hero.rating} · {property.hero.reviewCount} {t("hero.reviews")}
               </li>
             </ul>
           </div>
@@ -116,12 +123,12 @@ export function Footer() {
         {/* Bottom bar */}
         <div className="mt-10 sm:mt-14 pt-6 border-t border-background/15 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-background/60">
           <p>
-            © {new Date().getFullYear()} {property.name}. All rights reserved.
+            © {new Date().getFullYear()} {property.name}. {t("footer.rights")}
           </p>
           <p className="flex items-center gap-1.5">
-            Crafted with
+            {t("footer.crafted")}
             <Icon name="heart" className="h-3 w-3 fill-[#ff5c5c] text-[#ff5c5c]" />
-            in the Doon Valley
+            {t("footer.inDoon")}
           </p>
         </div>
       </div>

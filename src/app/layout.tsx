@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { StructuredData } from "@/components/site/structured-data";
+import { ServiceWorkerRegister } from "@/components/site/service-worker-register";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -83,6 +84,7 @@ export default function RootLayout({
         <StructuredData />
         {children}
         <Toaster />
+        <ServiceWorkerRegister />
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Icon } from "./icon";
 import { useBooking } from "./use-booking";
+import { useI18n } from "./use-i18n";
 import { property, buildWhatsappLink, defaultBookingMessage } from "@/lib/property";
 
 /**
@@ -13,6 +14,7 @@ import { property, buildWhatsappLink, defaultBookingMessage } from "@/lib/proper
 export function MobileBookingBar() {
   const [visible, setVisible] = useState(false);
   const openBooking = useBooking((s) => s.open);
+  const { t } = useI18n();
 
   useEffect(() => {
     const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.7);
@@ -40,7 +42,7 @@ export function MobileBookingBar() {
             <div className="flex items-center gap-1 text-[11px] text-muted-foreground mt-0.5">
               <Icon name="star" className="h-3 w-3 fill-amber-500 text-amber-500" />
               <span className="font-medium text-foreground/80">{property.hero.rating}</span>
-              <span>· {property.hero.reviewCount} reviews</span>
+              <span>· {property.hero.reviewCount} {t("hero.reviews")}</span>
             </div>
           </div>
           <Button
@@ -48,7 +50,7 @@ export function MobileBookingBar() {
             size="sm"
             className="h-11 px-5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-medium shadow-md shadow-primary/20"
           >
-            Book Now
+            {t("nav.bookNow")}
           </Button>
           <Button
             onClick={() =>

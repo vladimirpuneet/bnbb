@@ -8,21 +8,24 @@ import { ShareButton } from "./share-button";
 import { SaveButton } from "./save-button";
 import { LanguageToggle } from "./language-toggle";
 import { useBooking } from "./use-booking";
+import { useI18n } from "./use-i18n";
 import { property, buildWhatsappLink, defaultBookingMessage } from "@/lib/property";
+import type { TranslationKey } from "@/lib/i18n";
 
-const NAV_LINKS = [
-  { href: "#gallery", label: "Photos" },
-  { href: "#pricing", label: "Pricing" },
-  { href: "#amenities", label: "Amenities" },
-  { href: "#reviews", label: "Reviews" },
-  { href: "#location", label: "Location" },
-  { href: "#faq", label: "FAQ" },
+const NAV_LINKS: { href: string; labelKey: TranslationKey }[] = [
+  { href: "#gallery", labelKey: "nav.photos" },
+  { href: "#pricing", labelKey: "nav.pricing" },
+  { href: "#amenities", labelKey: "nav.amenities" },
+  { href: "#reviews", labelKey: "nav.reviews" },
+  { href: "#location", labelKey: "nav.location" },
+  { href: "#faq", labelKey: "nav.faq" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const openBooking = useBooking((s) => s.open);
+  const { t } = useI18n();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -84,7 +87,7 @@ export function Navbar() {
                     : "text-white/85 hover:text-white hover:bg-white/10"
                 }`}
               >
-                {l.label}
+                {t(l.labelKey)}
               </a>
             ))}
           </nav>
@@ -104,7 +107,7 @@ export function Navbar() {
               <Icon name="star" className="h-3.5 w-3.5 fill-current" />
               <span className="font-semibold">{property.hero.rating}</span>
               <span className="opacity-70">·</span>
-              <span className="opacity-70">Airbnb</span>
+              <span className="opacity-70">{t("nav.airbnb")}</span>
               <Icon name="arrowUpRight" className="h-3.5 w-3.5 opacity-70" />
             </a>
 
@@ -130,7 +133,7 @@ export function Navbar() {
               }`}
             >
               <Icon name="calendar" className="h-4 w-4 mr-1.5" strokeWidth={2} />
-              Book Now
+              {t("nav.bookNow")}
             </Button>
 
             <button
@@ -157,13 +160,13 @@ export function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className="px-3 py-2.5 rounded-lg text-sm font-medium text-foreground/85 hover:bg-secondary/70"
                 >
-                  {l.label}
+                  {t(l.labelKey)}
                 </a>
               ))}
               <div className="flex items-center gap-2 px-3 py-2 mt-1">
                 <Badge variant="secondary" className="rounded-full">
                   <Icon name="star" className="h-3 w-3 mr-1 fill-current" />
-                  {property.hero.rating} · {property.hero.reviewCount} reviews
+                  {property.hero.rating} · {property.hero.reviewCount} {t("hero.reviews")}
                 </Badge>
               </div>
               <Button
@@ -176,7 +179,7 @@ export function Navbar() {
                 className="mt-2 w-full justify-center"
               >
                 <Icon name="message" className="h-4 w-4 mr-2 text-[#25D366]" strokeWidth={2} />
-                Chat instantly on WhatsApp
+                {t("section.book.chat")}
               </Button>
             </nav>
           </div>

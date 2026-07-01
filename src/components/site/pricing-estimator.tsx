@@ -11,6 +11,7 @@ import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
 import { DateCalendar } from "./date-calendar";
 import { useBooking } from "./use-booking";
+import { useI18n } from "./use-i18n";
 import { property, calculateQuote } from "@/lib/property";
 
 function formatINR(n: number) {
@@ -42,6 +43,7 @@ export function PricingEstimator() {
   const setBookingCheckIn = useBooking((s) => s.setCheckIn);
   const setBookingCheckOut = useBooking((s) => s.setCheckOut);
   const setBookingGuests = useBooking((s) => s.setGuests);
+  const { t } = useI18n();
 
   const handleBookNow = () => {
     setBookingCheckIn(checkIn);
@@ -220,7 +222,7 @@ export function PricingEstimator() {
                       className="w-full h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-medium shadow-md shadow-primary/20 group"
                     >
                       <Icon name="calendar" className="h-5 w-5 mr-2" strokeWidth={2} />
-                      Book these dates
+                      {t("section.pricing.bookDates")}
                       <Icon name="arrowRight" className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
                     </Button>
 

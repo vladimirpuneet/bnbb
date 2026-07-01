@@ -5,6 +5,7 @@ import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { BlurImage } from "./blur-image";
 import { openLightbox } from "./lightbox";
+import { useI18n } from "./use-i18n";
 import { property } from "@/lib/property";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ const spanClass: Record<string, string> = {
 export function Gallery() {
   // For the visible grid, show first 8 images (rest accessible in lightbox)
   const visible = property.gallery.slice(0, 8);
+  const { t } = useI18n();
 
   return (
     <section id="gallery" className="py-16 sm:py-24 bg-background scroll-mt-16">
@@ -25,13 +27,13 @@ export function Gallery() {
           <div className="flex items-end justify-between gap-4 mb-8 sm:mb-10">
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80 mb-2">
-                The Gallery
+                {t("section.gallery.eyebrow")}
               </p>
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-foreground text-balance">
-                A glimpse of the valley
+                {t("section.gallery.title")}
               </h2>
               <p className="mt-2 text-muted-foreground max-w-xl text-pretty">
-                Every room opens to a frame of greenery. Tap any photo to explore the full gallery.
+                {t("section.gallery.desc")}
               </p>
             </div>
             <Button
@@ -41,7 +43,7 @@ export function Gallery() {
               onClick={() => openLightbox(0)}
             >
               <Icon name="camera" className="h-4 w-4 mr-2" />
-              Show all photos
+              {t("section.gallery.showAll")}
             </Button>
           </div>
         </Reveal>
@@ -87,7 +89,7 @@ export function Gallery() {
             onClick={() => openLightbox(0)}
           >
             <Icon name="camera" className="h-4 w-4 mr-2" />
-            Show all {property.allImages.length} photos
+            {t("section.gallery.showAll")} {property.allImages.length} {t("hero.photos")}
           </Button>
         </div>
       </div>
