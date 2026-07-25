@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { StructuredData } from "@/components/site/structured-data";
 import { ServiceWorkerRegister } from "@/components/site/service-worker-register";
+import { GoogleAnalytics } from "@next/third-parties/google";
+import { MetaPixel } from "@/components/site/meta-pixel";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -19,8 +21,18 @@ const playfair = Playfair_Display({
   style: ["normal", "italic"],
 });
 
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://valley-gaze.example.com"),
+  verification: {
+    google: "AHpwEnnGTgwPHzquncEm5kXP6LAqqcizNVqvKAYS0EI",
+  },
   title: "The Valley Gaze Penthouse | 3BHK Luxury Stay in Dehradun",
   description:
     "A serene 3BHK penthouse nestled amidst Dehradun's greenery with stunning valley & mountain views. Sleeps 9, fully equipped kitchen, terrace, lift access. Book directly via WhatsApp.",
@@ -54,7 +66,7 @@ export const metadata: Metadata = {
       "A serene 3BHK penthouse with stunning valley & mountain views in Dehradun. Sleeps 9, fully equipped kitchen, terrace. Book directly via WhatsApp.",
     siteName: "The Valley Gaze Penthouse",
     type: "website",
-    images: ["/images/img-01.jpeg"],
+    images: ["/images/hall/hero.webp"],
   },
   twitter: {
     card: "summary_large_image",
@@ -74,7 +86,7 @@ export const viewport = {
 /** Preload the hero image for faster LCP (Largest Contentful Paint). */
 const heroImagePreload = {
   rel: "preload",
-  href: "/images/img-01.jpeg",
+  href: "/images/hall/hero.webp",
   as: "image",
   fetchPriority: "high" as const,
 };
@@ -94,12 +106,20 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://api.open-meteo.com" />
       </head>
       <body
-        className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-background text-foreground`}
+        className={`${inter.variable} ${playfair.variable} ${dmSans.variable} font-sans antialiased bg-background text-foreground`}
       >
         <StructuredData />
         {children}
         <Toaster />
         <ServiceWorkerRegister />
+
+        {/* Analytics and Tracking */}
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
+        {process.env.NEXT_PUBLIC_META_PIXEL_ID && (
+          <MetaPixel pixelId={process.env.NEXT_PUBLIC_META_PIXEL_ID} />
+        )}
       </body>
     </html>
   );

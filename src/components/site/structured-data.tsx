@@ -17,7 +17,6 @@ export function StructuredData() {
     image: property.allImages.map((src) => `https://valley-gaze.example.com${src}`),
     url: "https://valley-gaze.example.com",
     telephone: `+${property.whatsappNumber}`,
-    priceRange: `${property.pricing.currency}${property.pricing.weekdayNightly} - ${property.pricing.currency}${property.pricing.weekendNightly}`,
     starRating: {
       "@type": "Rating",
       ratingValue: property.hero.rating.toString(),
@@ -78,36 +77,6 @@ export function StructuredData() {
       },
       reviewBody: r.text,
     })),
-    hasOfferCatalog: {
-      "@type": "OfferCatalog",
-      name: "Stay packages",
-      itemListElement: [
-        {
-          "@type": "Offer",
-          name: "Weekday stay (Sun–Thu)",
-          price: property.pricing.weekdayNightly.toString(),
-          priceCurrency: "INR",
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: property.pricing.weekdayNightly.toString(),
-            priceCurrency: "INR",
-            unitText: "per night",
-          },
-        },
-        {
-          "@type": "Offer",
-          name: "Weekend stay (Fri–Sat)",
-          price: property.pricing.weekendNightly.toString(),
-          priceCurrency: "INR",
-          priceSpecification: {
-            "@type": "UnitPriceSpecification",
-            price: property.pricing.weekendNightly.toString(),
-            priceCurrency: "INR",
-            unitText: "per night",
-          },
-        },
-      ],
-    },
     host: {
       "@type": "Person",
       name: property.host.name,

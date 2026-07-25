@@ -1,28 +1,29 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
-import { useI18n } from "./use-i18n";
+import { MapPin, Navigation } from "lucide-react";
 import { property } from "@/lib/property";
+import { trackEvent } from "@/lib/tracking";
+import { t } from "./use-i18n";
 
 const nearby = [
   { icon: "mountain", name: "Mussoorie", distance: "40 min drive", note: "Queen of the Hills", category: "Hill station" },
-  { icon: "leaf", name: "Robber's Cave", distance: "~25 min", note: "River cave & picnic spot", category: "Nature" },
-  { icon: "drop", name: "Sahastradhara", distance: "~30 min", note: "Sulphur springs", category: "Nature" },
+  { icon: "leaf", name: "Robber's Cave", distance: "~15 min", note: "River cave & picnic spot", category: "Nature" },
+  { icon: "drop", name: "Sahastradhara", distance: "~25 min", note: "Sulphur springs", category: "Nature" },
   { icon: "sun", name: "Forest Research Institute", distance: "~20 min", note: "Heritage architecture", category: "Heritage" },
-  { icon: "valley", name: "Malsi Deer Park", distance: "~15 min", note: "Nature & wildlife", category: "Nature" },
+  { icon: "sparkles", name: "Malsi Deer Park", distance: "~15 min", note: "Mini zoo & walking trails", category: "Wildlife" },
   { icon: "sparkles", name: "Paltan Bazaar", distance: "~20 min", note: "Local markets & food", category: "Market" },
 ];
 
-// Curated attractions with images from the property's downloaded gallery
-// (these images represent the kind of valley/nature views guests will experience)
+// Real attraction photos sourced from Wikimedia / Unsplash
 const attractions = [
   {
     name: "Mussoorie — The Queen of Hills",
-    image: "/images/img-14.jpeg",
+    image: "/images/attractions/mussoorie.webp",
     distance: "40 min drive",
     duration: "Full day",
     description: "Mall Road, Kempty Falls, Gun Hill point and colonial-era cafes perched at 2,005m.",
@@ -30,39 +31,39 @@ const attractions = [
   },
   {
     name: "Robber's Cave (Guchhupani)",
-    image: "/images/img-03.jpeg",
-    distance: "~25 min",
+    image: "/images/attractions/robbers.webp",
+    distance: "~15 min",
     duration: "2-3 hrs",
     description: "A natural river cave formation where you can wade through knee-deep water between limestone walls.",
     tags: ["Nature", "Adventure", "Family"],
   },
   {
     name: "Sahastradhara Springs",
-    image: "/images/img-13.jpeg",
-    distance: "~30 min",
+    image: "/images/attractions/sahastradhara.webp",
+    distance: "~25 min",
     duration: "Half day",
     description: "Thousand-fold sulphur springs known for therapeutic properties, with ropeway & eco gardens.",
     tags: ["Springs", "Wellness"],
   },
   {
     name: "Forest Research Institute",
-    image: "/images/img-09.jpeg",
+    image: "/images/attractions/fri.webp",
     distance: "~20 min",
     duration: "1-2 hrs",
     description: "A Greco-Roman architectural marvel with six museums showcasing India's forest heritage.",
     tags: ["Heritage", "Architecture"],
   },
   {
-    name: "Mindrolling Monastery",
-    image: "/images/img-15.jpeg",
-    distance: "~35 min",
-    duration: "2 hrs",
-    description: "One of India's largest Buddhist centres with a 60m Great Stupa and beautifully manicured gardens.",
-    tags: ["Spiritual", "Peaceful"],
+    name: "Malsi Deer Park",
+    image: "/images/attractions/malsi.webp",
+    distance: "~15 min",
+    duration: "1-2 hrs",
+    description: "A serene mini-zoo nestled in the Shivalik foothills, home to spotted deer, peacocks and lush walking trails.",
+    tags: ["Nature", "Wildlife"],
   },
   {
     name: "Paltan Bazaar",
-    image: "/images/img-16.jpeg",
+    image: "/images/attractions/paltan.webp",
     distance: "~20 min",
     duration: "2 hrs",
     description: "Dehradun's iconic market for local handicrafts, basmati rice, bakery treats and street food.",
@@ -71,7 +72,7 @@ const attractions = [
 ];
 
 export function Location() {
-  const { t } = useI18n();
+
   return (
     <section id="location" className="py-16 sm:py-24 bg-secondary/40 scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -86,67 +87,31 @@ export function Location() {
           <Reveal>
             <Card className="overflow-hidden border-border/70">
               <div className="relative aspect-[16/10] sm:aspect-[16/9] bg-secondary">
-                {/* Stylised map placeholder */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary to-accent/30" />
-                <div
-                  className="absolute inset-0 opacity-40"
-                  style={{
-                    backgroundImage:
-                      "linear-gradient(rgba(56, 110, 80, 0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 110, 80, 0.18) 1px, transparent 1px)",
-                    backgroundSize: "48px 48px",
-                  }}
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3456.789!2d78.0744786!3d30.4100031!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3908d7000ad370e7%3A0x57b7cdc781d089d6!2sThe%20Valley%20Gaze%20Penthouse!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="The Valley Gaze Penthouse location on Google Maps"
+                  className="absolute inset-0"
                 />
-                {/* Contour-like wavy lines */}
-                <svg
-                  className="absolute inset-0 h-full w-full text-primary/30"
-                  viewBox="0 0 800 450"
-                  preserveAspectRatio="none"
-                  fill="none"
-                >
-                  <path d="M0,120 Q200,80 400,140 T800,120" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0,180 Q220,140 420,200 T800,180" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0,240 Q180,200 380,260 T800,240" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0,300 Q200,260 400,320 T800,300" stroke="currentColor" strokeWidth="1.5" />
-                  <path d="M0,360 Q220,320 420,380 T800,360" stroke="currentColor" strokeWidth="1.5" />
-                </svg>
-                {/* Pin */}
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full">
-                  <div className="relative flex flex-col items-center">
-                    <div className="absolute -inset-3 rounded-full bg-primary/20 animate-ping" />
-                    <div className="relative grid place-items-center h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/40 border-2 border-background">
-                      <Icon name="mountain" className="h-5 w-5" strokeWidth={2} />
-                    </div>
-                    <div className="mt-1 h-2 w-1 bg-primary/40" />
-                  </div>
-                </div>
-                <div className="absolute bottom-4 left-4 right-4 sm:left-6 sm:right-6">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-background/90 backdrop-blur-md px-4 py-2 shadow-md">
-                    <Icon name="mapPin" className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-medium">{property.location}</span>
-                  </div>
-                </div>
               </div>
-              <CardContent className="p-5 sm:p-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 className="font-display text-lg font-semibold">{property.locationDetail}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Exact location shared after booking. Quiet residential area with greenery all around.
-                    </p>
-                  </div>
-                  <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                      property.location,
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline shrink-0"
-                  >
-                    Open in Maps
-                    <Icon name="arrowUpRight" className="h-3.5 w-3.5" />
-                  </a>
-                </div>
-              </CardContent>
+              <div className="p-3">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=The+Valley+Gaze+Penthouse,+Dehradun"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => trackEvent("get_directions", { source: "location_section" })}
+                  className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-colors"
+                >
+                  <Icon name="mapPin" className="h-4 w-4" />
+                  Open in Google Maps
+                  <Icon name="arrowUpRight" className="h-4 w-4" />
+                </a>
+              </div>
             </Card>
           </Reveal>
 

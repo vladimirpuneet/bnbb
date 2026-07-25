@@ -28,8 +28,8 @@ interface BookingState {
   recompute: () => void;
   /** Build the WhatsApp message + URL using current form state */
   getBookingUrl: () => string;
-  /** One-tap booking with default message (no form fill needed) */
-  quickBook: () => string;
+  /** Prefill dates/guests and open the modal */
+  prefillAndOpen: (opts: { checkIn?: string; checkOut?: string; guests?: string }) => void;
 }
 
 function compute(checkIn: string, checkOut: string, guests: string): { quote: Quote | null; error: string | null } {
@@ -50,6 +50,16 @@ function compute(checkIn: string, checkOut: string, guests: string): { quote: Qu
   return { quote, error: null };
 }
 
+function todayStr(): string {
+  const d = new Date();
+  return d.toISOString().split("T")[0];
+}
+function tomorrowStr(): string {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split("T")[0];
+}
+
 export const useBooking = create<BookingState>((set, get) => ({
   isOpen: false,
   checkIn: "",
@@ -58,7 +68,11 @@ export const useBooking = create<BookingState>((set, get) => ({
   name: "",
   quote: null,
   quoteError: null,
-  open: () => set({ isOpen: true }),
+  open: () => set((s) => ({
+    isOpen: true,
+    checkIn: s.checkIn || todayStr(),
+    checkOut: s.checkOut || tomorrowStr(),
+  })),
   close: () => set({ isOpen: false }),
   setCheckIn: (v) => {
     set({ checkIn: v });
@@ -86,19 +100,22 @@ export const useBooking = create<BookingState>((set, get) => ({
   },
   getBookingUrl: () => {
     const s = get();
-    const quote = s.quote
-      ? { nights: s.quote.nights, total: s.quote.total, currency: s.quote.currency }
-      : undefined;
     const msg = defaultBookingMessage({
       checkIn: s.checkIn || undefined,
       checkOut: s.checkOut || undefined,
       guests: s.guests || undefined,
-      quote,
     });
     const finalMsg = s.name
       ? `Hi ${property.host.name}! I'm ${s.name}.\n\n${msg.replace(/^Hi .*! 👋\n\n/, "")}`
       : msg;
     return buildWhatsappLink(finalMsg);
   },
-  quickBook: () => buildWhatsappLink(defaultBookingMessage({ guests: get().guests || undefined })),
+  prefillAndOpen: (opts) => {
+    const s = get();
+    const checkIn = opts.checkIn ?? s.checkIn;
+    const checkOut = opts.checkOut ?? s.checkOut;
+    const guests = opts.guests ?? s.guests;
+    const { quote, error } = compute(checkIn, checkOut, guests);
+    set({ checkIn, checkOut, guests, quote, quoteError: error, isOpen: true });
+  },
 }));

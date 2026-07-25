@@ -8,7 +8,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,10 +17,7 @@ import { Icon } from "./icon";
 import { DateCalendar } from "./date-calendar";
 import { useBooking } from "./use-booking";
 import { property } from "@/lib/property";
-
-function formatINR(n: number) {
-  return `${property.pricing.currency}${n.toLocaleString("en-IN")}`;
-}
+import { trackEvent } from "@/lib/tracking";
 
 export function BookingModal() {
   const {
@@ -32,7 +28,6 @@ export function BookingModal() {
     guests,
     name,
     quote,
-    quoteError,
     setCheckIn,
     setCheckOut,
     setGuests,
@@ -40,7 +35,6 @@ export function BookingModal() {
     getBookingUrl,
   } = useBooking();
 
-  // Lock body scroll when modal is open
   useEffect(() => {
     if (isOpen) {
       const original = document.body.style.overflow;
@@ -52,22 +46,17 @@ export function BookingModal() {
   }, [isOpen]);
 
   const handleSubmit = () => {
+    trackEvent("submit_booking", {
+      value: quote?.total || 0,
+      currency: "INR",
+      guests: guests,
+      nights: quote?.nights || 0,
+    });
     const url = getBookingUrl();
     window.open(url, "_blank", "noopener,noreferrer");
     close();
-    // Confirmation toast — reassures the user after redirect
-    toast.success("Booking enquiry sent! ✅", {
-      description: `WhatsApp opened for ${property.host.name}. They usually respond within an hour. Tip: check your WhatsApp tab to complete the message.`,
-      duration: 6000,
-    });
-  };
-
-  const handleQuickBook = () => {
-    const url = useBooking.getState().quickBook();
-    window.open(url, "_blank", "noopener,noreferrer");
-    close();
-    toast("Opening WhatsApp… 💬", {
-      description: `Send the pre-filled message to ${property.whatsappDisplay} and ${property.host.name} will get back to you shortly.`,
+    toast.success("Booking enquiry sent!", {
+      description: `WhatsApp opened for ${property.host.name}. They usually respond within an hour.`,
       duration: 6000,
     });
   };
@@ -78,7 +67,7 @@ export function BookingModal() {
         {/* Header banner */}
         <div className="relative h-32 sm:h-40 overflow-hidden shrink-0">
           <img
-            src="/images/img-03.jpeg"
+            src="/images/terrace/gallery-01.webp"
             alt="Valley view"
             className="absolute inset-0 h-full w-full object-cover"
           />
@@ -102,13 +91,23 @@ export function BookingModal() {
             onCheckOutChange={setCheckOut}
           />
 
-          {/* Guests + name */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="guests" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                <Icon name="users" className="inline h-3.5 w-3.5 mr-1" />
-                Guests
-              </Label>
+          {/* Guests */}
+          <div className="space-y-1.5">
+            <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <Icon name="users" className="inline h-3.5 w-3.5 mr-1" />
+              Guests
+            </Label>
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 rounded-full shrink-0"
+                onClick={() => setGuests(String(Math.max(1, parseInt(guests || "1", 10) - 1)))}
+                aria-label="Decrease guests"
+              >
+                −
+              </Button>
               <Input
                 id="guests"
                 type="number"
@@ -116,150 +115,70 @@ export function BookingModal() {
                 max={property.houseRules.maxGuests}
                 value={guests}
                 onChange={(e) => setGuests(e.target.value)}
-                className="bg-background"
+                className="bg-background text-center font-medium"
               />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="name" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                <Icon name="users" className="inline h-3.5 w-3.5 mr-1" />
-                Your name
-              </Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Optional"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-background"
-              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 rounded-full shrink-0"
+                onClick={() => setGuests(String(Math.min(property.houseRules.maxGuests, parseInt(guests || "1", 10) + 1)))}
+                aria-label="Increase guests"
+              >
+                +
+              </Button>
             </div>
           </div>
 
-          {/* Live quote panel */}
-          {quoteError ? (
-            <div className="rounded-xl border border-amber-500/30 bg-amber-50 dark:bg-amber-950/20 p-3.5 flex items-start gap-2.5">
-              <Icon name="quote" className="h-4.5 w-4.5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-              <div className="text-xs text-amber-800 dark:text-amber-200 leading-relaxed">{quoteError}</div>
-            </div>
-          ) : quote ? (
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Icon name="sparkles" className="h-4 w-4 text-primary" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-                    Estimated quote
-                  </span>
-                </div>
-                <Badge variant="secondary" className="rounded-full text-[10px] font-normal">
-                  {quote.seasonalName}
-                </Badge>
-              </div>
-
-              <div className="space-y-1.5 text-sm">
-                <div className="flex justify-between text-foreground/80">
-                  <span>
-                    {quote.currency}{property.pricing.weekdayNightly.toLocaleString("en-IN")} × {quote.weekdayNights} weekday night{quote.weekdayNights !== 1 ? "s" : ""}
-                  </span>
-                  <span className="tabular-nums">{formatINR(quote.weekdayNights * property.pricing.weekdayNightly)}</span>
-                </div>
-                {quote.weekendNights > 0 && (
-                  <div className="flex justify-between text-foreground/80">
-                    <span>
-                      {quote.currency}{property.pricing.weekendNightly.toLocaleString("en-IN")} × {quote.weekendNights} weekend night{quote.weekendNights !== 1 ? "s" : ""}
-                    </span>
-                    <span className="tabular-nums">{formatINR(quote.weekendNights * property.pricing.weekendNightly)}</span>
-                  </div>
-                )}
-                {quote.seasonalMultiplier > 1 && (
-                  <div className="flex justify-between text-amber-700 dark:text-amber-400 text-xs">
-                    <span>Seasonal adjustment ({Math.round((quote.seasonalMultiplier - 1) * 100)}% {quote.seasonalName})</span>
-                    <span className="tabular-nums">+{formatINR(Math.round(quote.nightlySubtotal * (quote.seasonalMultiplier - 1)))}</span>
-                  </div>
-                )}
-                {quote.longStayDiscount > 0 && (
-                  <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
-                    <span>{quote.longStayLabel}</span>
-                    <span className="tabular-nums">−{formatINR(quote.longStayDiscount)}</span>
-                  </div>
-                )}
-                {quote.extraGuestFee > 0 && (
-                  <div className="flex justify-between text-foreground/80">
-                    <span>Extra guests</span>
-                    <span className="tabular-nums">+{formatINR(quote.extraGuestFee)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between text-foreground/80">
-                  <span>Cleaning fee</span>
-                  <span className="tabular-nums">{quote.cleaningFee === 0 ? "Free" : formatINR(quote.cleaningFee)}</span>
-                </div>
-                <div className="flex justify-between text-foreground/80">
-                  <span>Service fee</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">Waived (direct booking)</span>
-                </div>
-              </div>
-
-              <div className="border-t border-primary/15 pt-3 flex items-end justify-between">
-                <div>
-                  <div className="text-xs text-muted-foreground uppercase tracking-wider">Total</div>
-                  <div className="text-xs text-muted-foreground">{quote.nights} night{quote.nights !== 1 ? "s" : ""}</div>
-                </div>
-                <div className="text-right">
-                  <div className="font-display text-2xl font-bold text-primary tabular-nums">
-                    {formatINR(quote.total)}
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    ≈ {formatINR(quote.perNight)} / night
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-xl border border-dashed border-border bg-secondary/40 p-4 text-center">
-              <Icon name="calendar" className="h-5 w-5 text-muted-foreground mx-auto mb-1.5" />
-              <p className="text-xs text-muted-foreground">
-                Select check-in &amp; check-out dates to see an instant price estimate.
-              </p>
-            </div>
-          )}
+          {/* Name */}
+          <div className="space-y-1.5">
+            <Label htmlFor="name" className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              <Icon name="users" className="inline h-3.5 w-3.5 mr-1" />
+              Your name
+            </Label>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Optional"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="bg-background"
+            />
+          </div>
 
           {/* Info banner */}
           <div className="rounded-lg bg-accent/60 border border-accent-foreground/10 p-3 flex items-start gap-2.5">
             <Icon name="message" className="h-5 w-5 text-primary shrink-0 mt-0.5" />
             <div className="text-xs text-accent-foreground/90 leading-relaxed">
-              Booking is confirmed directly with the host via WhatsApp. Tapping <strong>Request booking</strong> opens WhatsApp with a pre-filled enquiry — including your estimated quote — to <strong>{property.whatsappDisplay}</strong>.
+              Tapping <strong>Send enquiry</strong> opens WhatsApp with your dates and guest details pre-filled. Daksh will confirm availability and share the best price directly.
             </div>
           </div>
 
           {/* Max guests hint */}
-          <div className="flex items-center justify-between text-xs">
-            <Badge variant="secondary" className="rounded-full font-normal">
-              Max {property.houseRules.maxGuests} guests · Min {property.pricing.minNights} nights
-            </Badge>
-            <span className="text-muted-foreground">
-              <Icon name="clock" className="inline h-3 w-3 mr-1" />
-              Responds within an hour
-            </span>
-          </div>
+            <div className="flex items-center justify-between text-xs">
+              <Badge variant="secondary" className="rounded-full font-normal">
+                Max {property.houseRules.maxGuests} guests
+              </Badge>
+              <span className="text-muted-foreground">
+                <Icon name="clock" className="inline h-3 w-3 mr-1" />
+                Responds within an hour
+              </span>
+            </div>
         </div>
 
-        <DialogFooter className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0 flex-col sm:flex-col gap-2 items-stretch">
+        <div className="px-5 sm:px-6 pb-5 sm:pb-6 pt-0 flex flex-col gap-2 items-stretch">
           <Button
             size="lg"
             className="w-full h-12 bg-[#25D366] hover:bg-[#1da851] text-white font-medium shadow-md shadow-[#25D366]/20"
             onClick={handleSubmit}
           >
-            <Icon name="message" className="h-5 w-5 mr-2" strokeWidth={2} />
-            {quote ? `Request booking · ${formatINR(quote.total)}` : "Request booking on WhatsApp"}
+            <svg viewBox="0 0 24 24" className="h-5 w-5 mr-2" fill="currentColor">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+              <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.79 0-3.46-.46-4.91-1.27l-.35-.21-2.87.85.85-2.87-.21-.35A7.963 7.963 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z" />
+            </svg>
+            Send enquiry on WhatsApp
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full text-muted-foreground"
-            onClick={handleQuickBook}
-          >
-            Skip form &amp; chat directly →
-          </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

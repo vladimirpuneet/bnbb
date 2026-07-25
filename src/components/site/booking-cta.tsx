@@ -1,27 +1,21 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { StarRating } from "./star-rating";
 import { useBooking } from "./use-booking";
-import { useI18n } from "./use-i18n";
-import { property, buildWhatsappLink, defaultBookingMessage } from "@/lib/property";
+import { t } from "./use-i18n";
+import { property } from "@/lib/property";
 
 export function BookingCta() {
   const openBooking = useBooking((s) => s.open);
-  const { t } = useI18n();
-
-  const quickBook = () => {
-    window.open(buildWhatsappLink(defaultBookingMessage()), "_blank", "noopener,noreferrer");
-  };
 
   return (
     <section id="book" className="py-16 sm:py-24 bg-primary scroll-mt-16 relative overflow-hidden">
       {/* Decorative image strip */}
       <div className="absolute inset-0 opacity-15">
         <img
-          src="/images/img-14.jpeg"
+          src="/images/terrace/gallery-03.webp"
           alt=""
           className="h-full w-full object-cover"
           aria-hidden="true"
@@ -42,25 +36,15 @@ export function BookingCta() {
               {t("section.book.desc")}
             </p>
 
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
-              <Button
+            <div className="mt-8 flex items-center justify-center">
+              <button
                 onClick={openBooking}
-                size="lg"
-                className="h-13 sm:h-14 px-7 sm:px-9 rounded-full bg-white text-primary hover:bg-white/90 font-semibold text-base shadow-2xl shadow-black/20 group"
+                className="inline-flex items-center h-13 sm:h-14 px-7 sm:px-9 rounded-full bg-white text-primary hover:bg-white/90 font-semibold text-base shadow-2xl shadow-black/20 group transition-all"
               >
                 <Icon name="calendar" className="h-5 w-5 mr-2" strokeWidth={2} />
                 {t("nav.bookNow")}
                 <Icon name="arrowRight" className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
-              </Button>
-              <Button
-                onClick={quickBook}
-                size="lg"
-                variant="outline"
-                className="h-13 sm:h-14 px-6 sm:px-8 rounded-full bg-transparent border-white/40 text-primary-foreground hover:bg-white/10 hover:text-primary-foreground hover:border-white/60 font-medium"
-              >
-                <Icon name="message" className="h-5 w-5 mr-2 text-[#25D366]" strokeWidth={2} />
-                {t("section.book.chat")}
-              </Button>
+              </button>
             </div>
 
             {/* Trust strip */}
@@ -68,7 +52,6 @@ export function BookingCta() {
               <span className="inline-flex items-center gap-1.5">
                 <StarRating rating={property.hero.rating} size="sm" showValue={false} />
                 <span className="font-semibold">{property.hero.rating}</span>
-                <span className="opacity-75">({property.hero.reviewCount} {t("hero.reviews")})</span>
               </span>
               <span className="opacity-30 hidden sm:inline">·</span>
               <span className="inline-flex items-center gap-1.5">

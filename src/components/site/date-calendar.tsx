@@ -1,14 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Icon } from "./icon";
-import { property, getBookedDates } from "@/lib/property";
+import { getBookedDates } from "@/lib/property";
 import { cn } from "@/lib/utils";
-import { type DayClickEventHandler } from "react-day-picker";
+import { type Matcher } from "react-day-picker";
 
 interface DateCalendarProps {
   checkIn: string;
@@ -44,34 +44,35 @@ export function DateCalendar({
 
   const bookedDates = useMemo(() => getBookedDates(), []);
   const bookedSet = useMemo(() => new Set(bookedDates), [bookedDates]);
+  const todayStart = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
 
   // Disable booked dates + past dates + today (check-in starts tomorrow)
   const disabledDays = useMemo(
     () => [
-      { before: new Date() },
+      (date: Date) => date.getTime() < todayStart.getTime(),
       ...bookedDates.map((d) => parse(d)!).filter(Boolean),
     ],
-    [bookedDates],
+    [bookedDates, todayStart],
   );
 
   const checkInDate = parse(checkIn);
   const checkOutDate = parse(checkOut);
 
-  // For checkout calendar, also disable dates before checkIn + minNights
-  const minNights = property.pricing.minNights;
   const checkoutDisabled = useMemo(() => {
-    const base = [...disabledDays];
+    const base = [...disabledDays] as Matcher[];
     if (checkInDate) {
       const earliest = new Date(checkInDate);
-      earliest.setDate(earliest.getDate() + minNights);
-      // Disable everything before checkIn + minNights
+      earliest.setDate(earliest.getDate() + 1);
       base.push({ before: earliest });
     } else {
-      // No check-in yet — disable all
       base.push({ before: new Date() });
     }
     return base;
-  }, [disabledDays, checkInDate, minNights]);
+  }, [disabledDays, checkInDate]);
 
   /** Check if any booked date falls inside the [start, end) range */
   const rangeOverlapsBooking = (start: Date, end: Date): boolean => {
@@ -83,18 +84,25 @@ export function DateCalendar({
     return false;
   };
 
-  const handleCheckInSelect: DayClickEventHandler = (day) => {
+  const openOutTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    return () => clearTimeout(openOutTimer.current);
+  }, []);
+
+  const handleCheckInSelect = (day: Date) => {
     onCheckInChange(iso(day));
+    // Auto-set checkout to next day
+    const nextDay = new Date(day);
+    nextDay.setDate(nextDay.getDate() + 1);
+    onCheckOutChange(iso(nextDay));
     setOpenIn(false);
-    // If existing checkout is before or equal to new checkin, clear it
-    if (checkOutDate && checkOutDate <= day) {
-      onCheckOutChange("");
-    }
     // Auto-open checkout popover for a smooth flow
-    setTimeout(() => setOpenOut(true), 150);
+    clearTimeout(openOutTimer.current);
+    openOutTimer.current = setTimeout(() => setOpenOut(true), 150);
   };
 
-  const handleCheckOutSelect: DayClickEventHandler = (day) => {
+  const handleCheckOutSelect = (day: Date) => {
     if (!checkInDate) return;
     // Reject if range overlaps a booking
     if (rangeOverlapsBooking(checkInDate, day)) {
@@ -145,18 +153,8 @@ export function DateCalendar({
               showOutsideDays={false}
               className="rounded-lg border-0"
             />
-            <div className="border-t border-border/60 p-3 flex items-center gap-2 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-rose-400" />
-                Booked
-              </span>
-              <span className="inline-flex items-center gap-1 ml-3">
-                <span className="h-2 w-2 rounded-full bg-primary" />
-                Selected
-              </span>
-              <span className="ml-auto">
-                Min {minNights} nights
-              </span>
+            <div className="border-t border-border/60 p-3 text-xs text-muted-foreground text-center">
+              Pick any available date
             </div>
           </PopoverContent>
         </Popover>
@@ -184,9 +182,12 @@ export function DateCalendar({
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0" align="start">
             <Calendar
-              mode="single"
-              selected={checkOutDate}
-              onSelect={(d) => d && handleCheckOutSelect(d)}
+              mode="range"
+              selected={{ from: checkInDate, to: checkOutDate }}
+              onSelect={(range) => {
+                if (!range?.to || !checkInDate) return;
+                handleCheckOutSelect(range.to);
+              }}
               disabled={checkoutDisabled}
               numberOfMonths={1}
               showOutsideDays={false}
@@ -196,7 +197,7 @@ export function DateCalendar({
             <div className="border-t border-border/60 p-3 text-xs text-muted-foreground">
               {checkIn ? (
                 <span>
-                  From <strong className="text-foreground">{fmtDisplay(checkIn)}</strong> · pick a date at least {minNights} night{minNights > 1 ? "s" : ""} later
+                  From <strong className="text-foreground">{fmtDisplay(checkIn)}</strong> · pick your check-out date
                 </span>
               ) : (
                 <span>Select a check-in date first</span>

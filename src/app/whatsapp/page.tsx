@@ -1,16 +1,21 @@
 'use client';
 
 import { useEffect } from 'react';
-import { property } from '@/lib/property';
+import { useRouter } from 'next/navigation';
+import { useBooking } from '@/components/site/use-booking';
 
 export default function WhatsAppRedirect() {
+  const router = useRouter();
+  const openBooking = useBooking((s) => s.open);
+
   useEffect(() => {
-    window.location.href = `https://wa.me/${property.whatsappNumber}`;
-  }, []);
+    // Navigate back to the home page
+    router.replace('/');
+    // Slightly delay opening the modal to ensure the home page is mounted
+    setTimeout(() => {
+      openBooking();
+    }, 100);
+  }, [router, openBooking]);
   
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-black text-white">
-      <p>Redirecting to WhatsApp...</p>
-    </div>
-  );
+  return null;
 }

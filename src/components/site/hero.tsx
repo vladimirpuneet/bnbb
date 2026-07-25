@@ -3,17 +3,18 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
-import { StarRating } from "./star-rating";
 import { Reveal } from "./reveal";
 import { useBooking } from "./use-booking";
-import { useI18n } from "./use-i18n";
+import { t } from "./use-i18n";
 import { useScrollY } from "./use-scroll-y";
+import Image from "next/image";
 import { openLightbox } from "./lightbox";
 import { property } from "@/lib/property";
+import { trackEvent } from "@/lib/tracking";
 
 export function Hero() {
   const openBooking = useBooking((s) => s.open);
-  const { t } = useI18n();
+
   const scrollY = useScrollY();
 
   // Parallax: move background image slower than scroll (0.4x rate)
@@ -27,14 +28,17 @@ export function Hero() {
     <section id="top" className="relative -mt-16 sm:-mt-18 h-[100svh] min-h-[640px] w-full overflow-hidden">
       {/* Background image with parallax */}
       <div
-        className="absolute inset-0 will-change-transform"
+        className="absolute inset-x-0 top-0 h-[120%] will-change-transform"
         style={{ transform: `translateY(${parallaxOffset}px)` }}
       >
-        <img
+        <Image
           src={property.hero.image}
           alt="The Valley Gaze Penthouse — valley and mountain views in Dehradun"
-          className="absolute inset-0 h-[120%] w-full object-cover"
-          fetchPriority="high"
+          fill
+          sizes="100vw"
+          priority
+          quality={90}
+          className="object-cover"
         />
       </div>
       {/* Multi-layer overlay for legibility (stronger for WCAG contrast) */}
@@ -82,20 +86,20 @@ export function Hero() {
 
         {/* Stats inline */}
         <Reveal delay={0.45}>
-          <div className="mt-6 sm:mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-white/85 text-sm">
-            <span className="inline-flex items-center gap-1.5">
+          <div className="mt-6 sm:mt-8 flex items-center gap-x-1.5 sm:gap-x-5 gap-y-2 text-white/85 text-sm">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5">
               <Icon name="users" className="h-4 w-4" /> {property.stats[0].value} {t("hero.guests")}
             </span>
             <span className="opacity-40">·</span>
-            <span className="inline-flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5">
               <Icon name="door" className="h-4 w-4" /> {property.stats[1].value} {t("hero.bedrooms")}
             </span>
             <span className="opacity-40">·</span>
-            <span className="inline-flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5">
               <Icon name="bed" className="h-4 w-4" /> {property.stats[2].value} {t("hero.beds")}
             </span>
             <span className="opacity-40">·</span>
-            <span className="inline-flex items-center gap-1.5">
+            <span className="inline-flex items-center gap-1 sm:gap-1.5">
               <Icon name="bath" className="h-4 w-4" /> {property.stats[3].value} {t("hero.baths")}
             </span>
           </div>
@@ -103,9 +107,12 @@ export function Hero() {
 
         {/* CTA + rating */}
         <Reveal delay={0.55}>
-          <div className="mt-7 sm:mt-9 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-5">
+          <div className="mt-7 sm:mt-9 flex flex-col items-center sm:flex-row sm:items-center gap-3 sm:gap-5">
             <Button
-              onClick={openBooking}
+              onClick={() => {
+                trackEvent("begin_booking", { source: "hero" });
+                openBooking();
+              }}
               size="lg"
               className="h-13 sm:h-14 px-6 sm:px-8 rounded-full bg-white text-primary hover:bg-white/90 font-semibold text-base shadow-2xl shadow-black/30 group"
             >
@@ -115,33 +122,17 @@ export function Hero() {
             </Button>
 
             <button
-              onClick={() => openLightbox(0)}
+              onClick={() => {
+                trackEvent("view_gallery", { source: "hero" });
+                openLightbox(0);
+              }}
               className="inline-flex items-center gap-2 text-white/95 hover:text-white text-sm font-medium px-2 py-2 rounded-full transition-colors group"
             >
               <span className="grid place-items-center h-9 w-9 rounded-full bg-white/20 backdrop-blur-md group-hover:bg-white/30 transition-colors">
                 <Icon name="camera" className="h-4 w-4" />
               </span>
-              {t("hero.viewPhotos")} {property.allImages.length} {t("hero.photos")}
+              {t("hero.viewPhotos")}
             </button>
-
-            <div className="hidden sm:flex sm:ml-auto items-center gap-3">
-              {/* Starting price hint */}
-              <div className="flex flex-col items-end px-3 py-1.5">
-                <span className="text-[10px] uppercase tracking-wider text-white/70">{t("hero.from")}</span>
-                <span className="font-display text-lg font-semibold text-white tabular-nums drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                  ₹{property.pricing.weekdayNightly.toLocaleString("en-IN")}
-                  <span className="text-xs font-normal text-white/70"> {t("hero.perNight")}</span>
-                </span>
-              </div>
-              <div className="h-8 w-px bg-white/20" />
-              <div className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/15 backdrop-blur-md border border-white/25">
-                <StarRating rating={property.hero.rating} size="sm" showValue={false} />
-                <span className="text-white font-semibold text-sm tabular-nums">
-                  {property.hero.rating}
-                </span>
-                <span className="text-white/80 text-sm">· {property.hero.reviewCount}</span>
-              </div>
-            </div>
           </div>
         </Reveal>
       </div>

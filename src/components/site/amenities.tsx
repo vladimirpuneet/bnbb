@@ -4,11 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
-import { useI18n } from "./use-i18n";
+import { t } from "./use-i18n";
 import { property } from "@/lib/property";
 
 export function Amenities() {
-  const { t } = useI18n();
+
   // Group amenities by category for nicer presentation
   const categories = Array.from(new Set(property.amenities.map((a) => a.category)));
   const grouped = categories.map((cat) => ({
@@ -25,23 +25,23 @@ export function Amenities() {
           description={t("section.amenities.desc")}
         />
 
-        <div className="mt-10 sm:mt-14 grid gap-4 lg:grid-cols-3">
+        <div className="mt-10 sm:mt-14 columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-3 sm:gap-4">
           {grouped.map((g, i) => (
             <Reveal key={g.category} delay={i * 0.05}>
-              <div className="rounded-2xl sm:rounded-3xl bg-secondary/50 border border-border/60 p-5 sm:p-6 h-full transition-all duration-300 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 hover:-translate-y-0.5">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display text-lg font-semibold">{g.category}</h3>
-                  <Badge variant="outline" className="rounded-full text-xs">
+              <div className="break-inside-avoid mb-3 sm:mb-4 rounded-xl border border-border/60 bg-secondary/40 p-3.5 sm:p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-md hover:shadow-primary/5 hover:-translate-y-0.5">
+                <div className="flex items-center justify-between mb-2.5">
+                  <h3 className="font-display text-sm font-semibold leading-tight">{g.category}</h3>
+                  <Badge variant="outline" className="rounded-full text-[10px] h-5 px-2 shrink-0 ml-2">
                     {g.items.length}
                   </Badge>
                 </div>
-                <ul className="space-y-3">
+                <ul className="space-y-1.5">
                   {g.items.map((a) => (
-                    <li key={a.name} className="flex items-center gap-3 rounded-lg p-1 -m-1 transition-colors hover:bg-background/60">
-                      <span className="grid place-items-center h-9 w-9 rounded-xl bg-background border border-border/70 text-primary shrink-0 transition-colors group-hover:border-primary/30">
-                        <Icon name={a.icon} className="h-4.5 w-4.5" />
+                    <li key={a.name} className="flex items-center gap-2 rounded-md p-1 -mx-1 transition-colors hover:bg-background/60">
+                      <span className="grid place-items-center h-7 w-7 rounded-lg bg-background border border-border/70 text-primary shrink-0">
+                        <Icon name={a.icon} className="h-3.5 w-3.5" />
                       </span>
-                      <span className="text-sm text-foreground/90">{a.name}</span>
+                      <span className="text-xs text-foreground/90 leading-tight">{a.name}</span>
                     </li>
                   ))}
                 </ul>
@@ -50,15 +50,7 @@ export function Amenities() {
           ))}
         </div>
 
-        {/* Bottom note: total amenities */}
-        <Reveal delay={0.3}>
-          <div className="mt-6 flex items-center justify-center">
-            <p className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-              <Icon name="sparkles" className="h-4 w-4 text-primary" />
-              Showing a selection — the full list includes 40+ amenities.
-            </p>
-          </div>
-        </Reveal>
+
       </div>
     </section>
   );

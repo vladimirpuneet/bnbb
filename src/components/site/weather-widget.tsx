@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
-import { useI18n } from "./use-i18n";
+import { t } from "./use-i18n";
 import { property } from "@/lib/property";
 
 interface DayForecast {
@@ -13,6 +13,7 @@ interface DayForecast {
   max: number;
   min: number;
   code: number;
+  isToday?: boolean;
 }
 
 interface WeatherState {
@@ -29,12 +30,33 @@ interface WeatherState {
   forecast: DayForecast[];
 }
 
-/** WMO weather interpretation codes → label + lucide icon name */
+const CACHE_KEY = "tvgr_weather_cache";
+const CACHE_TTL = 2 * 60 * 60 * 1000; // 2 hours
+
+function readCache(): WeatherState | null {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(data: WeatherState) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+  } catch { /* noop */ }
+}
+
+/** WMO weather interpretation codes → label + icon name */
 const WMO: Record<number, { label: string; icon: string }> = {
   0: { label: "Clear sky", icon: "sun" },
   1: { label: "Mainly clear", icon: "sun" },
-  2: { label: "Partly cloudy", icon: "sun" },
-  3: { label: "Overcast", icon: "wind" },
+  2: { label: "Partly cloudy", icon: "cloud" },
+  3: { label: "Overcast", icon: "cloud" },
   45: { label: "Fog", icon: "wind" },
   48: { label: "Rime fog", icon: "wind" },
   51: { label: "Light drizzle", icon: "drop" },
@@ -54,9 +76,9 @@ const WMO: Record<number, { label: string; icon: string }> = {
   82: { label: "Violent showers", icon: "drop" },
   85: { label: "Snow showers", icon: "snowflake" },
   86: { label: "Heavy snow showers", icon: "snowflake" },
-  95: { label: "Thunderstorm", icon: "flame" },
-  96: { label: "Thunderstorm + hail", icon: "flame" },
-  99: { label: "Severe thunderstorm", icon: "flame" },
+  95: { label: "Thunderstorm", icon: "zap" },
+  96: { label: "Thunderstorm + hail", icon: "zap" },
+  99: { label: "Severe thunderstorm", icon: "zap" },
 };
 
 function wmo(code: number) {
@@ -64,6 +86,18 @@ function wmo(code: number) {
 }
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/** Best-time badge adapts to current month */
+function bestTimeBadge() {
+  const month = new Date().getMonth() + 1; // 1-12
+  if (month >= 10 || month <= 3) {
+    return { text: "Great time to visit now", icon: "sparkles", highlight: true };
+  }
+  if (month >= 4 && month <= 6) {
+    return { text: "Warm but pleasant · 22–38°C", icon: "sun", highlight: false };
+  }
+  return { text: "Lush & green · Monsoon season", icon: "drop", highlight: false };
+}
 
 export function WeatherWidget() {
   const [state, setState] = useState<WeatherState>({
@@ -74,6 +108,12 @@ export function WeatherWidget() {
   });
 
   useEffect(() => {
+    const cached = readCache();
+    if (cached) {
+      setState(cached);
+      return;
+    }
+
     let cancelled = false;
     async function load() {
       try {
@@ -93,9 +133,10 @@ export function WeatherWidget() {
           max: Math.round(data.daily.temperature_2m_max[i]),
           min: Math.round(data.daily.temperature_2m_min[i]),
           code: data.daily.weather_code[i],
+          isToday: i === 0,
         }));
 
-        setState({
+        const next: WeatherState = {
           loading: false,
           error: null,
           current: {
@@ -107,28 +148,35 @@ export function WeatherWidget() {
             isDay: data.current.is_day === 1,
           },
           forecast,
-        });
+        };
+
+        setState(next);
+        writeCache(next);
       } catch (e) {
         if (cancelled) return;
         setState((s) => ({ ...s, loading: false, error: (e as Error).message }));
       }
     }
     load();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
+
+  const badge = bestTimeBadge();
 
   return (
     <Card className="border-border/70 overflow-hidden h-full">
-      <div className="relative bg-gradient-to-br from-sky-500/15 via-cyan-500/10 to-emerald-500/10 dark:from-sky-950/40 dark:via-cyan-950/30 dark:to-emerald-950/20 p-5 sm:p-6">
-        {/* Decorative cloud/sun */}
-        <div className="absolute top-3 right-3 opacity-30">
-          <Icon name={state.current ? wmo(state.current.code).icon : "sun"} className="h-16 w-16 text-sky-600 dark:text-sky-400" />
+      <div className={`relative p-5 sm:p-6 ${
+        state.current?.isDay === false
+          ? "bg-gradient-to-br from-amber-950/20 via-stone-900/30 to-background dark:from-amber-950/30 dark:via-stone-950/40 dark:to-background"
+          : "bg-gradient-to-br from-amber-50/80 via-stone-50/60 to-background dark:from-amber-950/20 dark:via-stone-900/15 dark:to-background"
+      }`}>
+        {/* Decorative icon — muted */}
+        <div className="absolute top-3 right-3 opacity-10">
+          <Icon name={state.current ? wmo(state.current.code).icon : "sun"} className="h-16 w-16 text-amber-600 dark:text-amber-400" />
         </div>
 
         <div className="relative">
-          <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-sky-700 dark:text-sky-400 mb-1">
+          <div className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-amber-700 dark:text-amber-400 mb-1">
             <Icon name="mapPin" className="h-3.5 w-3.5" />
             Dehradun weather
           </div>
@@ -164,7 +212,7 @@ export function WeatherWidget() {
               <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1">
                   <Icon name="drop" className="h-3.5 w-3.5" />
-                  {state.current.humidity}% humidity
+                  {state.current.humidity}%
                 </span>
                 <span className="inline-flex items-center gap-1">
                   <Icon name="wind" className="h-3.5 w-3.5" />
@@ -181,18 +229,24 @@ export function WeatherWidget() {
         <CardContent className="p-4 grid grid-cols-3 gap-2 border-t border-border/50">
           {state.forecast.slice(1, 4).map((d) => {
             const date = new Date(d.date + "T00:00:00");
-            const dayLabel = WEEKDAYS[date.getDay()];
+            const dayLabel = d.isToday ? "Today" : WEEKDAYS[date.getDay()];
             const w = wmo(d.code);
             return (
               <div
                 key={d.date}
-                className="rounded-xl bg-secondary/50 border border-border/40 p-3 text-center"
+                className={`rounded-xl p-3 text-center transition-colors ${
+                  d.isToday
+                    ? "bg-primary/8 border border-primary/20"
+                    : "bg-secondary/50 border border-border/40"
+                }`}
               >
-                <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <div className={`text-xs font-medium uppercase tracking-wider ${
+                  d.isToday ? "text-primary" : "text-muted-foreground"
+                }`}>
                   {dayLabel}
                 </div>
                 <div className="grid place-items-center my-1.5">
-                  <Icon name={w.icon} className="h-6 w-6 text-primary" />
+                  <Icon name={w.icon} className="h-6 w-6 text-foreground/60" />
                 </div>
                 <div className="text-xs font-medium text-foreground/80 truncate" title={w.label}>
                   {w.label}
@@ -209,9 +263,16 @@ export function WeatherWidget() {
       )}
 
       <div className="px-5 sm:px-6 pb-4 -mt-1">
-        <Badge variant="outline" className="rounded-full text-[10px] font-normal border-sky-500/30 text-sky-700 dark:text-sky-400">
-          <Icon name="sparkles" className="h-3 w-3 mr-1" />
-          Best time: Oct–Mar · 15–25°C
+        <Badge
+          variant="outline"
+          className={`rounded-full text-[10px] font-normal ${
+            badge.highlight
+              ? "border-primary/40 text-primary bg-primary/5"
+              : "border-amber-500/30 text-amber-700 dark:text-amber-400"
+          }`}
+        >
+          <Icon name={badge.icon as any} className="h-3 w-3 mr-1" />
+          {badge.text}
         </Badge>
       </div>
     </Card>
@@ -219,7 +280,7 @@ export function WeatherWidget() {
 }
 
 export function WeatherSection() {
-  const { t } = useI18n();
+
   return (
     <section id="weather" className="py-16 sm:py-24 bg-background scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, type ImgHTMLAttributes } from "react";
+import { useState, useCallback, useRef, useEffect, type ImgHTMLAttributes } from "react";
 import { blurPlaceholders } from "@/lib/blur-placeholders";
 import { imageDimensions } from "@/lib/image-dimensions";
 import { cn } from "@/lib/utils";
@@ -8,24 +8,11 @@ import { cn } from "@/lib/utils";
 interface BlurImageProps extends ImgHTMLAttributes<HTMLImageElement> {
   src: string;
   alt: string;
-  /** The key in blurPlaceholders (e.g. "img-01" or "host"). If not provided, derived from src. */
   blurKey?: string;
   className?: string;
-  /** Extra class applied to the wrapper span */
   wrapperClassName?: string;
 }
 
-/**
- * Image with a base64 blur-up placeholder shown while the full image loads.
- * The placeholder is a 20×20 JPEG stretched to fill the container, with a
- * blur filter — it fades out once the real image has loaded.
- *
- * Also sets width/height attributes from image-dimensions.ts to prevent
- * Cumulative Layout Shift (CLS).
- *
- * Usage:
- *   <BlurImage src="/images/img-01.jpeg" alt="Living room" blurKey="img-01" />
- */
 export function BlurImage({
   src,
   alt,
@@ -34,9 +21,9 @@ export function BlurImage({
   wrapperClassName,
   ...rest
 }: BlurImageProps) {
+  const imgRef = useRef<HTMLImageElement>(null);
   const [loaded, setLoaded] = useState(false);
 
-  // Derive blur key from src: "/images/img-01.jpeg" → "img-01"
   const key =
     blurKey ??
     src
@@ -49,13 +36,19 @@ export function BlurImage({
 
   const handleLoad = useCallback(() => setLoaded(true), []);
 
+  // Handle already-cached images: onLoad may fire before React attaches the handler
+  useEffect(() => {
+    if (imgRef.current?.complete) {
+      setLoaded(true);
+    }
+  }, []);
+
   return (
     <span
       className={cn("relative block overflow-hidden", wrapperClassName)}
       style={placeholder ? { backgroundImage: `url(${placeholder})` } : undefined}
       aria-hidden={loaded ? "true" : undefined}
     >
-      {/* Placeholder layer — blurred, fades out when image loads */}
       {placeholder && (
         <span
           className={cn(
@@ -66,6 +59,7 @@ export function BlurImage({
         />
       )}
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         loading="lazy"

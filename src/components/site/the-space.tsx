@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { openLightbox } from "./lightbox";
-import { useI18n } from "./use-i18n";
+import { t } from "./use-i18n";
 import { property } from "@/lib/property";
 import { SectionHeader } from "./section-header";
 
@@ -13,27 +13,27 @@ const blocks = [
     icon: "sofa",
     title: "The space",
     body: property.theSpace,
-    image: "/images/img-09.jpeg",
+    image: "/images/hall/gallery-01.webp",
     accent: "Living area",
   },
   {
     icon: "sun",
     title: "Guest access",
     body: property.guestAccess,
-    image: "/images/img-14.jpeg",
+    image: "/images/terrace/hero.webp",
     accent: "Terrace & lift",
   },
   {
     icon: "quote",
     title: "Other things to note",
     body: property.otherNotes,
-    image: "/images/img-13.jpeg",
+    image: "/images/kitchen/gallery-01.webp",
     accent: "House etiquette",
   },
 ];
 
 export function TheSpace() {
-  const { t } = useI18n();
+
   return (
     <section id="space" className="py-16 sm:py-24 bg-background scroll-mt-16">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

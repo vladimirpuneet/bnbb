@@ -8,15 +8,16 @@
 
 export const property = {
   name: "The Valley Gaze Penthouse",
-  tagline: "3BHK · Entire home",
+  tagline: "3BHK · Penthouse",
   location: "Dehradun, Uttarakhand, India",
-  locationDetail: "Tehri Garhwal · 40 mins from Mussoorie",
+  locationDetail: "BhagwantPur · 40 mins from Mussoorie",
   airbnbUrl: "https://www.airbnb.co.in/rooms/1423686395342627652",
+  googleReviewsUrl: "https://www.google.com/maps/place/The+Valley+Gaze+Penthouse/@30.3165,78.0322,17z/",
   whatsappNumber: "918800311966", // +91 88003 11966
   whatsappDisplay: "+91 88003 11966",
 
   hero: {
-    image: "/images/img-01.jpeg",
+    image: "/images/hall/hero.webp",
     rating: 4.7,
     reviewCount: 27,
   },
@@ -37,7 +38,7 @@ export const property = {
     serviceFee: 0, // waived for direct bookings
     extraGuestFee: 500, // per guest above 6
     extraGuestThreshold: 6,
-    minNights: 2,
+    minNights: 1,
     note: "Rates are indicative. Final pricing is confirmed by the host on WhatsApp. Direct bookings skip platform service fees.",
     seasons: [
       { name: "Low season", months: "Jul – Sep", multiplier: 1.0, note: "Monsoon, lush greenery" },
@@ -57,8 +58,8 @@ export const property = {
       a: "Check-in is from 3:00 PM onwards and check-out is by 11:00 AM. Self check-in is available via a lockbox, so you can arrive anytime after 3 PM — even late at night.",
     },
     {
-      q: "Is the price shown final?",
-      a: "The pricing estimator on this page gives a transparent estimate based on weekday/weekend rates and any applicable seasonal multipliers. The host confirms the exact total (including any discounts for longer stays) on WhatsApp before you pay anything.",
+      q: "How do I know the price?",
+      a: "Simply select your dates and guest count above, then tap 'Get a quote on WhatsApp'. Daksh will confirm availability and share the best available rate directly — no hidden fees, no platform commissions.",
     },
     {
       q: "How many guests can stay? Are pets allowed?",
@@ -66,15 +67,11 @@ export const property = {
     },
     {
       q: "Is there parking? How do I reach the property?",
-      a: "Yes — free parking is available on the premises. The property is in Tehri Garhwal, Dehradun, about 40 minutes from Mussoorie. Both lift and stairs provide access to the penthouse floor.",
+      a: "Yes — free parking is available on the premises. The property is in BhagwantPur, Dehradun, about 40 minutes from Mussoorie. Both lift and stairs provide access to the penthouse floor.",
     },
     {
       q: "What amenities are included?",
       a: "A fully equipped kitchen with utensils, high-speed Wi-Fi, dedicated workspace, TV, air conditioning, heating, hot water, lift access, terrace with valley/mountain views, and exterior security cameras for your safety.",
-    },
-    {
-      q: "What is the cancellation policy?",
-      a: "Flexible: free cancellation up to 7 days before check-in for a full refund. Within 7 days, the advance is non-refundable but can be adjusted towards a future stay within 6 months, subject to availability.",
     },
     {
       q: "Are there house rules I should know?",
@@ -89,18 +86,7 @@ export const property = {
     timezone: "Asia/Kolkata",
   },
 
-  /**
-   * Booked dates — the calendar shows these as unavailable.
-   * In a real app these would come from the host's calendar API; here we
-   * hardcode a realistic sample of blocked dates relative to "today".
-   * Use the exported getBookedDates() helper to get absolute ISO strings.
-   */
-  bookedDateOffsets: [
-    3, 4, 5, // a 3-night block 3 days from today
-    12, 13, // weekend block
-    20, 21, 22, 23, // a 4-night block
-    31, // single day next month
-  ],
+  bookedDateOffsets: [],
 
   stats: [
     { icon: "users", label: "Guests", value: "9" },
@@ -143,48 +129,85 @@ export const property = {
     {
       name: "Bedroom 1",
       bed: "1 king bed",
-      image: "/images/img-06.jpeg",
+      image: "/images/bedroom-1/hero.webp",
       detail: "Spacious master room with an attached washroom and large windows framing the valley.",
     },
     {
       name: "Bedroom 2",
       bed: "1 king bed",
-      image: "/images/img-07.jpeg",
+      image: "/images/bedroom-2/hero.webp",
       detail: "Cozy second room with an attached washroom — perfect for couples or family.",
     },
     {
       name: "Bedroom 3",
       bed: "1 king bed",
-      image: "/images/img-05.jpeg",
+      image: "/images/bedroom-3/hero.webp",
       detail: "Third room opening to the hall, with access to the common washroom.",
     },
   ],
 
   amenities: [
-    { icon: "mountain", name: "Mountain view", category: "Views" },
-    { icon: "valley", name: "Valley view", category: "Views" },
-    { icon: "utensils", name: "Kitchen", category: "Cooking" },
-    { icon: "wifi", name: "Wifi", category: "Connectivity" },
-    { icon: "laptop", name: "Dedicated workspace", category: "Connectivity" },
-    { icon: "car", name: "Free parking on premises", category: "Access" },
-    { icon: "paw", name: "Pets allowed", category: "Family" },
-    { icon: "tv", name: "TV", category: "Entertainment" },
-    { icon: "elevator", name: "Lift", category: "Access" },
-    { icon: "camera", name: "Exterior security cameras", category: "Safety" },
-    { icon: "snowflake", name: "Air conditioning", category: "Climate" },
-    { icon: "flame", name: "Heating", category: "Climate" },
-    { icon: "shirt", name: "Washer", category: "Laundry" },
-    { icon: "sparkles", name: "Cleaning products", category: "Essentials" },
+    // Scenic Views
+    { icon: "mountain", name: "Mountain view", category: "Scenic Views" },
+    { icon: "valley", name: "Valley view", category: "Scenic Views" },
+
+    // Bathroom
+    { icon: "wind", name: "Hair dryer", category: "Bathroom" },
+    { icon: "sparkles", name: "Body soap", category: "Bathroom" },
     { icon: "drop", name: "Hot water", category: "Bathroom" },
-    { icon: "sofa", name: "Spacious hall", category: "Spaces" },
-    { icon: "sun", name: "Terrace access", category: "Spaces" },
-    { icon: "leaf", name: "Garden / greenery", category: "Outdoors" },
-    { icon: "shield", name: "Smoke alarm", category: "Safety" },
-    { icon: "shield", name: "Carbon monoxide alarm", category: "Safety" },
-    { icon: "lock", name: "Lockbox self check-in", category: "Access" },
-    { icon: "firstaid", name: "First aid kit", category: "Safety" },
-    { icon: "fireextinguisher", name: "Fire extinguisher", category: "Safety" },
-    { icon: "book", name: "Books & reading material", category: "Entertainment" },
+
+    // Bedroom and Laundry
+    { icon: "sparkles", name: "Essentials (towels, bed sheets, soap, toilet paper)", category: "Bedroom and Laundry" },
+    { icon: "shirt", name: "Hangers", category: "Bedroom and Laundry" },
+    { icon: "bed", name: "Cotton bed linen", category: "Bedroom and Laundry" },
+    { icon: "bed", name: "Extra pillows and blankets", category: "Bedroom and Laundry" },
+    { icon: "shirt", name: "Iron", category: "Bedroom and Laundry" },
+    { icon: "shirt", name: "Clothes drying rack", category: "Bedroom and Laundry" },
+    { icon: "door", name: "Clothes storage (wardrobes)", category: "Bedroom and Laundry" },
+
+    // Entertainment
+    { icon: "tv", name: "TV", category: "Entertainment" },
+
+    // Heating and Cooling
+    { icon: "snowflake", name: "AC – split-type ductless system", category: "Heating and Cooling" },
+    { icon: "flame", name: "Heating", category: "Heating and Cooling" },
+
+    // Home Safety
+    { icon: "camera", name: "Exterior security cameras (outer area)", category: "Home Safety" },
+    { icon: "shield", name: "Smoke alarm", category: "Home Safety" },
+    { icon: "bell", name: "Carbon monoxide alarm", category: "Home Safety" },
+    { icon: "firstaid", name: "First aid kit", category: "Home Safety" },
+
+    // Internet and Office
+    { icon: "wifi", name: "WiFi", category: "Internet and Office" },
+    { icon: "laptop", name: "Dedicated workspace", category: "Internet and Office" },
+
+    // Kitchen and Dining
+    { icon: "utensils", name: "Kitchen", category: "Kitchen and Dining" },
+    { icon: "refrigerator", name: "LG refrigerator", category: "Kitchen and Dining" },
+    { icon: "cookingPot", name: "Cooking basics (pots, pans, oil, salt, pepper)", category: "Kitchen and Dining" },
+    { icon: "forkKnife", name: "Crockery and cutlery", category: "Kitchen and Dining" },
+    { icon: "snowflake", name: "Freezer", category: "Kitchen and Dining" },
+    { icon: "cookingPot", name: "Stainless steel induction cooker", category: "Kitchen and Dining" },
+    { icon: "cookingPot", name: "Kettle", category: "Kitchen and Dining" },
+    { icon: "wine", name: "Wine glasses", category: "Kitchen and Dining" },
+    { icon: "trash", name: "Waste compactor", category: "Kitchen and Dining" },
+    { icon: "table", name: "Dining table", category: "Kitchen and Dining" },
+    { icon: "coffee", name: "Coffee", category: "Kitchen and Dining" },
+
+    // Outdoor
+    { icon: "flame", name: "Firepit", category: "Outdoor" },
+
+    // Parking and Facilities
+    { icon: "car", name: "Free parking on premises", category: "Parking and Facilities" },
+    { icon: "parkingMeter", name: "Free on-street parking", category: "Parking and Facilities" },
+    { icon: "elevator", name: "Lift", category: "Parking and Facilities" },
+
+    // Services
+    { icon: "paw", name: "Pets allowed (assistance animals always welcome)", category: "Services" },
+    { icon: "lock", name: "Self check-in (lockbox)", category: "Services" },
+    { icon: "users", name: "Host greets you", category: "Services" },
+    { icon: "mapPin", name: "Local sightseeing guidance from host", category: "Services" },
   ],
 
   houseRules: {
@@ -210,15 +233,9 @@ export const property = {
 
   host: {
     name: "Daksh Thakur",
-    title: "Superhost",
-    image: "/images/host.jpeg",
-    yearsHosting: 1,
-    totalReviews: 44,
+    image: "/images/host.webp",
     averageRating: 4.66,
-    responseRate: 99,
-    responseTime: "within an hour",
     school: "Mountain school, Mussoorie",
-    work: "Living life fully",
     bio: "I'm passionate about welcoming guests to experience the serene beauty of the Doon Valley. As a Superhost, I'm committed to making your stay comfortable, memorable, and hassle-free. Whether you need local recommendations or a quick fix at the property, I'm just a message away.",
   },
 
@@ -381,46 +398,103 @@ export const property = {
 
   /** Image gallery — pairs of {src, caption, span} for the masonry layout */
   gallery: [
-    { src: "/images/img-01.jpeg", caption: "Living room · valley view", span: "lg" },
-    { src: "/images/img-02.jpeg", caption: "Living room", span: "sm" },
-    { src: "/images/img-03.jpeg", caption: "Terrace & valley", span: "tall" },
-    { src: "/images/img-04.jpeg", caption: "Living room corner", span: "sm" },
-    { src: "/images/img-05.jpeg", caption: "Bedroom", span: "tall" },
-    { src: "/images/img-06.jpeg", caption: "Bedroom 2", span: "sm" },
-    { src: "/images/img-07.jpeg", caption: "Bedroom 3", span: "sm" },
-    { src: "/images/img-08.jpeg", caption: "Living room", span: "tall" },
-    { src: "/images/img-09.jpeg", caption: "Living room", span: "sm" },
-    { src: "/images/img-10.jpeg", caption: "Living room", span: "sm" },
-    { src: "/images/img-11.jpeg", caption: "Living room", span: "sm" },
-    { src: "/images/img-12.jpeg", caption: "Interior detail", span: "sm" },
-    { src: "/images/img-13.jpeg", caption: "Kitchen & dining", span: "tall" },
-    { src: "/images/img-14.jpeg", caption: "Terrace view", span: "lg" },
-    { src: "/images/img-15.jpeg", caption: "Valley vista", span: "sm" },
-    { src: "/images/img-16.jpeg", caption: "Cozy corner", span: "sm" },
+    { src: "/images/hall/hero.webp", caption: "Living room · valley view", span: "lg" },        // 1920x1280 LANDSCAPE
+    { src: "/images/terrace/hero.webp", caption: "Terrace", span: "tall" },                        // 1440x1920 PORTRAIT
+    { src: "/images/terrace/gallery-01.webp", caption: "Valley panorama", span: "sm" },            // 1920x1280 LANDSCAPE
+    { src: "/images/hall/gallery-01.webp", caption: "Hall interior", span: "tall" },               // 1372x1920 PORTRAIT
+    { src: "/images/bedroom-1/hero.webp", caption: "Bedroom 1", span: "lg" },                      // 1920x1290 LANDSCAPE
+    { src: "/images/bedroom-2/hero.webp", caption: "Bedroom 2", span: "sm" },                      // 1920x1280 LANDSCAPE
+    { src: "/images/kitchen/hero.webp", caption: "Kitchen", span: "sm" },                          // 1920x1375 LANDSCAPE
+    { src: "/images/bedroom-3/hero.webp", caption: "Bedroom 3", span: "sm" },                      // 1920x1280 LANDSCAPE
+    { src: "/images/hall/gallery-02.webp", caption: "Hall", span: "sm" },                          // 1920x1521 LANDSCAPE
+    { src: "/images/hall/gallery-03.webp", caption: "Living space", span: "tall" },                // 1280x1920 PORTRAIT
+    { src: "/images/terrace/gallery-02.webp", caption: "Mountain view", span: "sm" },              // 1920x1280 LANDSCAPE
+    { src: "/images/bathroom/hero.webp", caption: "Bathroom", span: "tall" },                      // 1280x1920 PORTRAIT
+    { src: "/images/kitchen/gallery-01.webp", caption: "Kitchen detail", span: "sm" },             // 1920x1280 LANDSCAPE
+    { src: "/images/terrace/gallery-03.webp", caption: "Terrace sunset", span: "lg" },             // 1920x1280 LANDSCAPE
+    { src: "/images/hall/gallery-04.webp", caption: "Valley vista", span: "sm" },                  // 1920x1193 LANDSCAPE
+    { src: "/images/hall/gallery-05.webp", caption: "Interior", span: "tall" },                    // 1280x1920 PORTRAIT
+    { src: "/images/hall/gallery-06.webp", caption: "Hall evening", span: "tall" },                // 1317x1920 PORTRAIT
+    { src: "/images/bedroom-1/gallery-01.webp", caption: "Bedroom 1 detail", span: "tall" },       // 1280x1920 PORTRAIT
+    { src: "/images/terrace/gallery-04.webp", caption: "Terrace morning", span: "sm" },            // 1920x1280 LANDSCAPE
+    { src: "/images/hall/gallery-07.webp", caption: "Living room", span: "sm" },                   // 1920x1280 LANDSCAPE
+    { src: "/images/bedroom-2/gallery-01.webp", caption: "Bedroom 2 detail", span: "sm" },         // 1920x1431 LANDSCAPE
+    { src: "/images/terrace/gallery-05.webp", caption: "Terrace view", span: "sm" },               // 1920x1280 LANDSCAPE
+    { src: "/images/hall/gallery-08.webp", caption: "Hall corner", span: "tall" },                 // 1359x1920 PORTRAIT
+    { src: "/images/bedroom-3/gallery-01.webp", caption: "Bedroom 3 detail", span: "sm" },         // 1920x1280 LANDSCAPE
+    { src: "/images/kitchen/gallery-02.webp", caption: "Kitchen appliances", span: "tall" },       // 1280x1920 PORTRAIT
+    { src: "/images/terrace/gallery-06.webp", caption: "Valley sunrise", span: "lg" },             // 1920x1280 LANDSCAPE
+    { src: "/images/hall/gallery-09.webp", caption: "Hall detail", span: "tall" },                 // 1440x1920 PORTRAIT
+    { src: "/images/terrace/gallery-07.webp", caption: "Terrace night", span: "sm" },              // 1920x1280 LANDSCAPE
+    { src: "/images/bathroom/gallery-01.webp", caption: "Bathroom detail", span: "tall" },         // 1280x1920 PORTRAIT
+    { src: "/images/hall/gallery-10.webp", caption: "Living space", span: "tall" },                // 1440x1920 PORTRAIT
+    { src: "/images/kitchen/gallery-03.webp", caption: "Kitchen storage", span: "tall" },          // 1280x1920 PORTRAIT
+    { src: "/images/terrace/gallery-08.webp", caption: "Terrace garden", span: "sm" },             // 1920x1280 LANDSCAPE
+    { src: "/images/bedroom-1/gallery-02.webp", caption: "Bedroom 1 window", span: "tall" },       // 1280x1920 PORTRAIT
+    { src: "/images/terrace/gallery-09.webp", caption: "Valley dusk", span: "sm" },                // 1920x1280 LANDSCAPE
+    { src: "/images/bedroom-1/gallery-03.webp", caption: "Bedroom 1 bed", span: "sm" },            // 1920x1336 LANDSCAPE
+    { src: "/images/kitchen/gallery-04.webp", caption: "Kitchen counter", span: "tall" },          // 1280x1920 PORTRAIT
   ],
 
   /** Full-resolution image list for the lightbox carousel */
   allImages: [
-    "/images/img-01.jpeg",
-    "/images/img-02.jpeg",
-    "/images/img-03.jpeg",
-    "/images/img-04.jpeg",
-    "/images/img-05.jpeg",
-    "/images/img-06.jpeg",
-    "/images/img-07.jpeg",
-    "/images/img-08.jpeg",
-    "/images/img-09.jpeg",
-    "/images/img-10.jpeg",
-    "/images/img-11.jpeg",
-    "/images/img-12.jpeg",
-    "/images/img-13.jpeg",
-    "/images/img-14.jpeg",
-    "/images/img-15.jpeg",
-    "/images/img-16.jpeg",
+    "/images/hall/hero.webp",
+    "/images/hall/gallery-01.webp",
+    "/images/hall/gallery-02.webp",
+    "/images/hall/gallery-03.webp",
+    "/images/hall/gallery-04.webp",
+    "/images/hall/gallery-05.webp",
+    "/images/hall/gallery-06.webp",
+    "/images/hall/gallery-07.webp",
+    "/images/hall/gallery-08.webp",
+    "/images/hall/gallery-09.webp",
+    "/images/hall/gallery-10.webp",
+    "/images/terrace/hero.webp",
+    "/images/terrace/gallery-01.webp",
+    "/images/terrace/gallery-02.webp",
+    "/images/terrace/gallery-03.webp",
+    "/images/terrace/gallery-04.webp",
+    "/images/terrace/gallery-05.webp",
+    "/images/terrace/gallery-06.webp",
+    "/images/terrace/gallery-07.webp",
+    "/images/terrace/gallery-08.webp",
+    "/images/terrace/gallery-09.webp",
+    "/images/terrace/gallery-10.webp",
+    "/images/terrace/gallery-11.webp",
+    "/images/terrace/gallery-12.webp",
+    "/images/bedroom-1/hero.webp",
+    "/images/bedroom-1/gallery-01.webp",
+    "/images/bedroom-1/gallery-02.webp",
+    "/images/bedroom-1/gallery-03.webp",
+    "/images/bedroom-1/gallery-04.webp",
+    "/images/bedroom-1/gallery-05.webp",
+    "/images/bedroom-1/gallery-06.webp",
+    "/images/bedroom-1/gallery-07.webp",
+    "/images/bedroom-1/gallery-08.webp",
+    "/images/bedroom-1/gallery-09.webp",
+    "/images/bedroom-2/hero.webp",
+    "/images/bedroom-2/gallery-01.webp",
+    "/images/bedroom-2/gallery-02.webp",
+    "/images/bedroom-2/gallery-03.webp",
+    "/images/bedroom-2/gallery-04.webp",
+    "/images/bedroom-2/gallery-05.webp",
+    "/images/bedroom-2/gallery-06.webp",
+    "/images/bedroom-3/hero.webp",
+    "/images/bedroom-3/gallery-01.webp",
+    "/images/bedroom-3/gallery-02.webp",
+    "/images/bedroom-3/gallery-03.webp",
+    "/images/bedroom-3/gallery-04.webp",
+    "/images/bedroom-3/gallery-05.webp",
+    "/images/kitchen/hero.webp",
+    "/images/kitchen/gallery-01.webp",
+    "/images/kitchen/gallery-02.webp",
+    "/images/kitchen/gallery-03.webp",
+    "/images/kitchen/gallery-04.webp",
+    "/images/bathroom/hero.webp",
+    "/images/bathroom/gallery-01.webp",
+    "/images/bathroom/gallery-02.webp",
   ],
 } as const;
-
-export type Property = typeof property;
 
 /**
  * Generate absolute ISO date strings (yyyy-mm-dd) for booked dates,
@@ -434,12 +508,6 @@ export function getBookedDates(): string[] {
     d.setDate(d.getDate() + offset);
     return d.toISOString().split("T")[0];
   });
-}
-
-/** Check if a given ISO date string is booked. */
-export function isDateBooked(isoDate: string, booked?: string[]): boolean {
-  const list = booked ?? getBookedDates();
-  return list.includes(isoDate);
 }
 
 /** Build a WhatsApp deep link with an optional pre-filled message */

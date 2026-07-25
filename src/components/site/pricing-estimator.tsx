@@ -1,56 +1,47 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
 import { DateCalendar } from "./date-calendar";
+import { t } from "./use-i18n";
+import { property } from "@/lib/property";
 import { useBooking } from "./use-booking";
-import { useI18n } from "./use-i18n";
-import { property, calculateQuote } from "@/lib/property";
-
-function formatINR(n: number) {
-  return `${property.pricing.currency}${n.toLocaleString("en-IN")}`;
-}
-
-function defaultDates() {
-  const today = new Date();
-  const checkIn = new Date(today);
-  checkIn.setDate(today.getDate() + 7);
-  const checkOut = new Date(checkIn);
-  checkOut.setDate(checkIn.getDate() + 2);
-  const fmt = (d: Date) => d.toISOString().split("T")[0];
-  return { checkIn: fmt(checkIn), checkOut: fmt(checkOut) };
-}
 
 export function PricingEstimator() {
-  const defaults = useMemo(() => defaultDates(), []);
-  const [checkIn, setCheckIn] = useState(defaults.checkIn);
-  const [checkOut, setCheckOut] = useState(defaults.checkOut);
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
   const [guests, setGuests] = useState("2");
 
-  const quote = useMemo(
-    () => calculateQuote({ checkIn, checkOut, guests: parseInt(guests || "1", 10) }),
-    [checkIn, checkOut, guests],
-  );
+  useEffect(() => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+    const fmt = (d: Date) => d.toISOString().split("T")[0];
+    setCheckIn(fmt(today));
+    setCheckOut(fmt(tomorrow));
+  }, []);
 
-  const openBooking = useBooking((s) => s.open);
-  const setBookingCheckIn = useBooking((s) => s.setCheckIn);
-  const setBookingCheckOut = useBooking((s) => s.setCheckOut);
-  const setBookingGuests = useBooking((s) => s.setGuests);
-  const { t } = useI18n();
 
-  const handleBookNow = () => {
-    setBookingCheckIn(checkIn);
-    setBookingCheckOut(checkOut);
-    setBookingGuests(guests);
-    openBooking();
+  const prefillAndOpen = useBooking((s) => s.prefillAndOpen);
+
+  const handleRequestQuote = () => {
+    prefillAndOpen({ checkIn, checkOut, guests });
   };
+
+  const nights =
+    checkIn && checkOut
+      ? Math.round(
+          (new Date(checkOut + "T00:00:00").getTime() -
+            new Date(checkIn + "T00:00:00").getTime()) /
+            (1000 * 60 * 60 * 24),
+        )
+      : 0;
 
   return (
     <section id="pricing" className="py-16 sm:py-24 bg-background scroll-mt-16">
@@ -67,11 +58,10 @@ export function PricingEstimator() {
         />
 
         <div className="mt-10 sm:mt-14 grid lg:grid-cols-[1.1fr_1fr] gap-6 lg:gap-8 items-start">
-          {/* Estimator inputs */}
+          {/* Date picker + guest selector */}
           <Reveal>
             <Card className="border-border/70 overflow-hidden">
               <CardContent className="p-6 sm:p-8 space-y-5">
-                {/* Visual date calendar (same as booking modal) */}
                 <DateCalendar
                   checkIn={checkIn}
                   checkOut={checkOut}
@@ -116,166 +106,102 @@ export function PricingEstimator() {
                     </Button>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Up to {property.houseRules.maxGuests} guests · extra guest fee applies above {property.pricing.extraGuestThreshold}
+                    Up to {property.houseRules.maxGuests} guests
                   </p>
                 </div>
 
-                {/* Rate card legend */}
-                <div className="grid grid-cols-3 gap-2 pt-2">
-                  <div className="rounded-xl bg-secondary/60 border border-border/60 p-3 text-center">
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Weekday</div>
-                    <div className="font-display font-semibold text-sm mt-0.5">{formatINR(property.pricing.weekdayNightly)}</div>
-                    <div className="text-[10px] text-muted-foreground">Sun–Thu</div>
-                  </div>
-                  <div className="rounded-xl bg-secondary/60 border border-border/60 p-3 text-center">
-                    <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Weekend</div>
-                    <div className="font-display font-semibold text-sm mt-0.5">{formatINR(property.pricing.weekendNightly)}</div>
-                    <div className="text-[10px] text-muted-foreground">Fri–Sat</div>
-                  </div>
-                  <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/20 p-3 text-center">
-                    <div className="text-[10px] uppercase tracking-wider text-emerald-700 dark:text-emerald-400">Service fee</div>
-                    <div className="font-display font-semibold text-sm mt-0.5 text-emerald-700 dark:text-emerald-400">₹0</div>
-                    <div className="text-[10px] text-muted-foreground">Direct only</div>
-                  </div>
-                </div>
+                {nights >= property.pricing.minNights && (
+                  <p className="text-sm text-muted-foreground text-center">
+                    {nights} night{nights !== 1 ? "s" : ""} · {guests} guest{guests !== "1" ? "s" : ""}
+                  </p>
+                )}
+
+                <Button
+                  onClick={handleRequestQuote}
+                  size="lg"
+                  className="w-full h-12 rounded-xl bg-[#25D366] hover:bg-[#1da851] text-white font-medium shadow-md shadow-[#25D366]/20 group"
+                >
+                  <svg viewBox="0 0 24 24" className="h-5 w-5 mr-2" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                    <path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0 0 12 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.79 0-3.46-.46-4.91-1.27l-.35-.21-2.87.85.85-2.87-.21-.35A7.963 7.963 0 0 1 4 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z" />
+                  </svg>
+                  Get a quote on WhatsApp
+                  <Icon name="arrowRight" className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
+                </Button>
+
+                <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
+                  Final pricing is confirmed by the host on WhatsApp. Direct bookings skip platform service fees.
+                </p>
               </CardContent>
             </Card>
           </Reveal>
 
-          {/* Quote output */}
+          {/* Why book direct */}
           <Reveal delay={0.1}>
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-card to-card overflow-hidden">
-              <CardContent className="p-6 sm:p-8">
-                {quote ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80">
-                          Your estimate
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-0.5">
-                          {quote.nights} night{quote.nights !== 1 ? "s" : ""} · {guests} guest{guests !== "1" ? "s" : ""}
-                        </p>
-                      </div>
-                      <Badge className="rounded-full bg-primary/10 text-primary border-primary/20 hover:bg-primary/15">
-                        {quote.seasonalName}
-                      </Badge>
+            <Card className="border-border/70 overflow-hidden">
+              <CardContent className="p-6 sm:p-8 space-y-5">
+                <div>
+                  <p className="text-xs font-medium uppercase tracking-[0.2em] text-primary/80 mb-2">
+                    Why book direct
+                  </p>
+                  <h3 className="font-display text-xl sm:text-2xl font-semibold">
+                    Best rates, zero fees
+                  </h3>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <span className="grid place-items-center h-9 w-9 rounded-xl bg-primary/10 text-primary shrink-0">
+                      <Icon name="sparkles" className="h-4.5 w-4.5" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium">No service fees</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Platforms charge ₹1,000–2,000 per booking. Book direct and save.
+                      </p>
                     </div>
-
-                    <div className="font-display text-5xl sm:text-6xl font-bold text-primary tabular-nums leading-none">
-                      {formatINR(quote.total)}
-                    </div>
-                    <p className="text-sm text-muted-foreground -mt-2">
-                      ≈ {formatINR(quote.perNight)} per night · all-inclusive
-                    </p>
-
-                    {/* Breakdown */}
-                    <div className="rounded-xl bg-background/60 border border-border/50 p-4 space-y-2 text-sm">
-                      <div className="flex justify-between text-foreground/85">
-                        <span>
-                          {quote.weekdayNights} weekday × {formatINR(property.pricing.weekdayNightly)}
-                        </span>
-                        <span className="tabular-nums">{formatINR(quote.weekdayNights * property.pricing.weekdayNightly)}</span>
-                      </div>
-                      {quote.weekendNights > 0 && (
-                        <div className="flex justify-between text-foreground/85">
-                          <span>
-                            {quote.weekendNights} weekend × {formatINR(property.pricing.weekendNightly)}
-                          </span>
-                          <span className="tabular-nums">{formatINR(quote.weekendNights * property.pricing.weekendNightly)}</span>
-                        </div>
-                      )}
-                      {quote.seasonalMultiplier > 1 && (
-                        <div className="flex justify-between text-amber-700 dark:text-amber-400 text-xs">
-                          <span>Seasonal adjustment ({quote.seasonalName})</span>
-                          <span className="tabular-nums">+{formatINR(Math.round(quote.nightlySubtotal * (quote.seasonalMultiplier - 1)))}</span>
-                        </div>
-                      )}
-                      {quote.longStayDiscount > 0 && (
-                        <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
-                          <span className="flex items-center gap-1.5">
-                            <Icon name="check" className="h-3.5 w-3.5" strokeWidth={3} />
-                            {quote.longStayLabel}
-                          </span>
-                          <span className="tabular-nums">−{formatINR(quote.longStayDiscount)}</span>
-                        </div>
-                      )}
-                      {quote.extraGuestFee > 0 && (
-                        <div className="flex justify-between text-foreground/85">
-                          <span>Extra guest fee</span>
-                          <span className="tabular-nums">+{formatINR(quote.extraGuestFee)}</span>
-                        </div>
-                      )}
-                      <div className="flex justify-between text-foreground/85">
-                        <span>Cleaning fee</span>
-                        <span className="tabular-nums">{quote.cleaningFee === 0 ? "Free" : formatINR(quote.cleaningFee)}</span>
-                      </div>
-                      <div className="flex justify-between text-emerald-700 dark:text-emerald-400">
-                        <span>Service fee</span>
-                        <span className="font-medium">Waived</span>
-                      </div>
-                    </div>
-
-                    <Button
-                      onClick={handleBookNow}
-                      size="lg"
-                      className="w-full h-12 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 font-medium shadow-md shadow-primary/20 group"
-                    >
-                      <Icon name="calendar" className="h-5 w-5 mr-2" strokeWidth={2} />
-                      {t("section.pricing.bookDates")}
-                      <Icon name="arrowRight" className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5" strokeWidth={2} />
-                    </Button>
-
-                    <p className="text-[11px] text-muted-foreground text-center leading-relaxed">
-                      {property.pricing.note}
-                    </p>
                   </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Icon name="calendar" className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-                    <p className="text-sm text-muted-foreground">
-                      Pick valid dates (minimum {property.pricing.minNights} nights) to see your estimate.
-                    </p>
+
+                  <div className="flex items-start gap-3">
+                    <span className="grid place-items-center h-9 w-9 rounded-xl bg-primary/10 text-primary shrink-0">
+                      <Icon name="message" className="h-4.5 w-4.5" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium">Personal communication</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Chat directly with Daksh on WhatsApp. Get answers within an hour.
+                      </p>
+                    </div>
                   </div>
-                )}
+
+                  <div className="flex items-start gap-3">
+                    <span className="grid place-items-center h-9 w-9 rounded-xl bg-primary/10 text-primary shrink-0">
+                      <Icon name="check" className="h-4.5 w-4.5" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium">Flexible arrangements</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Customise your stay — early check-in, special requests, longer stays.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <span className="grid place-items-center h-9 w-9 rounded-xl bg-primary/10 text-primary shrink-0">
+                      <Icon name="medal" className="h-4.5 w-4.5" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium">Superhost guarantee</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                      4.7★ rating · 99% response rate, replies within an hour.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </Reveal>
         </div>
-
-        {/* Seasonal rates table */}
-        <Reveal delay={0.2}>
-          <div className="mt-8 sm:mt-10 grid sm:grid-cols-3 gap-3">
-            {property.pricing.seasons.map((s) => (
-              <div
-                key={s.name}
-                className={`rounded-2xl border p-4 sm:p-5 ${
-                  s.multiplier >= 1.3
-                    ? "border-amber-500/30 bg-amber-50 dark:bg-amber-950/20"
-                    : s.multiplier >= 1.1
-                      ? "border-primary/20 bg-primary/5"
-                      : "border-border/60 bg-secondary/40"
-                }`}
-              >
-                <div className="flex items-center justify-between mb-1.5">
-                  <h3 className="font-display text-base font-semibold">{s.name}</h3>
-                  <Badge
-                    variant="outline"
-                    className={`rounded-full text-xs ${
-                      s.multiplier >= 1.3
-                        ? "border-amber-500/40 text-amber-700 dark:text-amber-400"
-                        : "border-primary/30 text-primary"
-                    }`}
-                  >
-                    ×{s.multiplier.toFixed(2)}
-                  </Badge>
-                </div>
-                <p className="text-xs text-muted-foreground">{s.months}</p>
-                <p className="text-xs text-foreground/70 mt-1.5">{s.note}</p>
-              </div>
-            ))}
-          </div>
-        </Reveal>
       </div>
     </section>
   );

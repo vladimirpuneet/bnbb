@@ -5,12 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
-import { useI18n } from "./use-i18n";
+import { t } from "./use-i18n";
 import { property } from "@/lib/property";
 
 export function HouseRules() {
   const r = property.houseRules;
-  const { t } = useI18n();
+
 
   return (
     <section id="rules" className="py-16 sm:py-24 bg-background scroll-mt-16">

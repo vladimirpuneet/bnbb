@@ -10,13 +10,10 @@ import { Card } from "@/components/ui/card";
 import { Icon } from "./icon";
 import { Reveal } from "./reveal";
 import { SectionHeader } from "./section-header";
-import { useBooking } from "./use-booking";
-import { useI18n } from "./use-i18n";
-import { property, buildWhatsappLink, defaultBookingMessage } from "@/lib/property";
+import { t } from "./use-i18n";
+import { property } from "@/lib/property";
 
 export function Faq() {
-  const openBooking = useBooking((s) => s.open);
-  const { t } = useI18n();
 
   return (
     <section id="faq" className="py-16 sm:py-24 bg-secondary/40 scroll-mt-16">
@@ -24,7 +21,7 @@ export function Faq() {
         <SectionHeader
           eyebrow={t("section.faq.eyebrow")}
           title={t("section.faq.title")}
-          description="Everything you need to know before booking. Can't find an answer? Tap any Book Now button to chat directly with the host."
+          description="Everything you need to know before booking. Can't find an answer? Call the host directly."
           align="center"
         />
 
@@ -66,22 +63,13 @@ export function Faq() {
                 Chat directly with {property.host.name} on WhatsApp — usually responds within an hour.
               </p>
             </div>
-            <div className="flex gap-2 w-full sm:w-auto">
-              <button
-                onClick={openBooking}
-                className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium transition-colors flex-1 sm:flex-initial"
-              >
-                <Icon name="calendar" className="h-4 w-4" strokeWidth={2} />
-                {t("nav.bookNow")}
-              </button>
+            <div className="flex gap-2 w-full sm:w-auto justify-center">
               <a
-                href={buildWhatsappLink(defaultBookingMessage())}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-1.5 h-10 px-4 rounded-full bg-[#25D366] hover:bg-[#1da851] text-white text-sm font-medium transition-colors flex-1 sm:flex-initial"
+                href={`tel:${property.whatsappNumber}`}
+                className="inline-flex items-center justify-center gap-1.5 h-10 px-5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-medium transition-colors"
               >
-                <Icon name="message" className="h-4 w-4" strokeWidth={2} />
-                WhatsApp
+                <Icon name="phone" className="h-4 w-4" strokeWidth={2} />
+                Call now
               </a>
             </div>
           </div>
