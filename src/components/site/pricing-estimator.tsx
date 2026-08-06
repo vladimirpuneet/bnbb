@@ -13,6 +13,8 @@ import { t } from "./use-i18n";
 import { property } from "@/lib/property";
 import { useBooking } from "./use-booking";
 
+import { sendGAEvent } from "@next/third-parties/google";
+
 export function PricingEstimator() {
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
@@ -31,6 +33,7 @@ export function PricingEstimator() {
   const prefillAndOpen = useBooking((s) => s.prefillAndOpen);
 
   const handleRequestQuote = () => {
+    sendGAEvent({ event: "whatsapp_enquiry", send_to: "AW-7868293897" });
     prefillAndOpen({ checkIn, checkOut, guests });
   };
 

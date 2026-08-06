@@ -18,6 +18,7 @@ import { DateCalendar } from "./date-calendar";
 import { useBooking } from "./use-booking";
 import { property } from "@/lib/property";
 import { trackEvent } from "@/lib/tracking";
+import { sendGAEvent } from "@next/third-parties/google";
 
 export function BookingModal() {
   const {
@@ -52,6 +53,9 @@ export function BookingModal() {
       guests: guests,
       nights: quote?.nights || 0,
     });
+    // Fire Google Ads conversion tracking
+    sendGAEvent({ event: "whatsapp_enquiry", send_to: "AW-7868293897" });
+    
     const url = getBookingUrl();
     window.open(url, "_blank", "noopener,noreferrer");
     close();

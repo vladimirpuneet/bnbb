@@ -35,4 +35,4 @@ While Meta Ads are great for *creating* desire, Google Ads capture people who al
 
 *   **Google Search Console:** Ensures Google indexes your site via `sitemap.xml` for organic "best penthouse in Dehradun" searches.
 *   **Google Search Ads:** Bid on highly specific phrases like *"luxury 3bhk penthouse dehradun"* or *"remote workcation homestay dehradun"*.
-*   **The GA4 Synergy:** Link GA4 directly to Google Ads. Google's AI will automatically optimize your ad spend to find the exact type of people who click your WhatsApp button!
+*   **The GA4 & Google Ads Synergy:** Link GA4 directly to Google Ads. We have instrumented the website to fire a custom `whatsapp_enquiry` conversion event directly to Google Ads (Account `AW-7868293897`) whenever a user clicks the "Send enquiry on WhatsApp" button. Google's AI will automatically optimize your ad spend to find the exact type of people who trigger this high-intent action!
