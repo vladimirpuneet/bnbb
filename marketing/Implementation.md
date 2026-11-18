@@ -1,6 +1,23 @@
+# Tracking & Campaign Implementation Guide
+
+This document summarizes the active website tracking setup and the step-by-step playbook for the "Water Canister" Meta Retargeting campaign.
+
+---
+
+## Active Website Tracking (Implemented)
+
+| Platform | Configuration | Tracked Events |
+| :--- | :--- | :--- |
+| **Google Analytics 4** | Loaded via `@next/third-parties/google` using `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `src/app/layout.tsx` | Page views + custom events via `trackEvent()` in `src/lib/tracking.ts` |
+| **Google Ads** | Tag `AW-7868293897` loaded in `src/app/layout.tsx` | `whatsapp_enquiry` fired via `sendGAEvent()` in `booking-modal.tsx` and `pricing-estimator.tsx` |
+| **Meta Pixel** | Loaded via `src/components/site/meta-pixel.tsx` using `NEXT_PUBLIC_META_PIXEL_ID` | `PageView` on load; mapped via `src/lib/tracking.ts`: `begin_booking` -> `InitiateCheckout`, `submit_booking` & `outbound_ota_click` -> `Lead`, `view_gallery` & `get_directions` -> `ViewContent` |
+| **Google Search Console** | Verified via `<meta name="google-site-verification">` in `src/app/layout.tsx` | Sitemap submitted at `https://valleygaze.homes/sitemap.xml` (`public/sitemap.xml`) |
+
+---
+
 # Meta Ads Retargeting Boilerplate
 
-This is the playbook for setting up the "Water Canister" retargeting campaign on Meta (Facebook/Instagram). 
+This is the playbook for setting up the "Water Canister" retargeting campaign on Meta (Facebook/Instagram).
 Our goal is to **only** show ads to people who visited the site, looked around, but left without messaging on WhatsApp.
 
 ---

@@ -14,10 +14,11 @@ You must systematically ask every happy guest for a review. Timing is critical.
 
 > "Hi [Name]! Thank you so much for choosing ValleyGaze Penthouse. We absolutely loved hosting you. Safe travels back home! ✈️
 >
-> As a small local business, Google reviews mean the absolute world to us. If you enjoyed the views and your stay, would you mind taking 60 seconds to drop us a 5-star rating? 
-> 
-> [INSERT_DIRECT_GOOGLE_REVIEW_LINK_HERE]
-> 
+> As a small local business, Google reviews mean the absolute world to us. If you enjoyed the views and your stay, would you mind taking 60 seconds to drop us a 5-star rating?
+>
+> https://www.google.com/maps/place/The+Valley+Gaze+Penthouse/@30.3165,78.0322,17z/
+> *(Tip: Replace with your short `g.page/r/.../review` link from Google Business Profile -> "Ask for reviews" to open the review box directly.)*
+>
 > Hope to host you again next time you're in Doon! ⛰️"
 
 ### Responding to Reviews (Crucial for SEO)
@@ -32,7 +33,7 @@ Google rewards businesses that use their platform actively. Post an update to yo
 
 ### Post Archetype A: The "Atmosphere" Post
 * **Photo:** A high-quality shot of the balcony, a cup of coffee, or the mountain view.
-* **Caption:** "Monsoon season is hitting Dehradun and the valley views from the penthouse have never looked better. The perfect weather to sit back with a coffee. ☕️ Book your peaceful getaway today. #DehradunStay #LuxuryHomestay"
+* **Caption:** "Crisp winter mornings in Dehradun and clear Himalayan valley views from the penthouse have never looked better. The perfect weather to sit back on the terrace with a hot coffee. ☕️ Book your peaceful getaway today. #DehradunStay #LuxuryHomestay"
 * **Button:** 'Book Now' (Link to your website)
 
 ### Post Archetype B: The "Workcation" Post
@@ -42,7 +43,7 @@ Google rewards businesses that use their platform actively. Post an update to yo
 
 ### Post Archetype C: The "Proximity" Post
 * **Photo:** A shot of Mussoorie or a local Dehradun cafe.
-* **Caption:** "Planning a trip to Mussoorie? Stay away from the extreme traffic! ValleyGaze is located perfectly in Dehradun, giving you a luxury basecamp just a 45-minute drive from Mussoorie mall road. 🚗"
+* **Caption:** "Planning a trip to Mussoorie? Stay away from the extreme traffic! ValleyGaze is located perfectly in BhagwantPur, Dehradun, giving you a luxury basecamp just a 40-minute drive from Mussoorie. 🚗"
 * **Button:** 'Book Now' (Link to your website)
 
 ---
